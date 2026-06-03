@@ -1,6 +1,9 @@
 package main
 
 import (
+	"backend/db"
+	"backend/middleware"
+	"backend/model"
 	"context"
 	"log"
 	"net/http"
@@ -10,12 +13,39 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Erro ao carregar arquivo .env")
+	}
+
+	dbConnection, err := db.ConnectDB(
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"),
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = dbConnection.AutoMigrate(&model.User{}, &model.Task{}, &model.Notification{})
+
+	if err != nil {
+		log.Fatal("Erro ao migrar banco de dados:", err)
+	}
+
+	jwtSecret := os.Getenv("JWT_SECRET")
+	authMiddleware := middleware.RequireAuth(jwtSecret)
+	dependencies := setupDependencies(dbConnection)
+
 	server := gin.Default()
 
-	setupRoutes(server)
+	setupRoutes(server, dependencies, authMiddleware)
 
 	srv := &http.Server{
 		Addr:    "0.0.0.0:8000",
