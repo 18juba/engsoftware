@@ -18,7 +18,7 @@ const (
 
 type Task struct {
 	ID             int          `json:"id" gorm:"primaryKey"`
-	UserID         int          `json:"user_id" gorm:"not null;index"`
+	UserID         *int         `json:"user_id" gorm:"not null;index"`
 	Title          string       `json:"title" gorm:"not null"`
 	Description    string       `json:"description" gorm:"type:text"`
 	ScheduledTime  time.Time    `json:"scheduled_time" gorm:"not null"`
@@ -30,3 +30,5 @@ type Task struct {
 
 	User *User `gorm:"foreignKey:UserID" json:"user,omitempty"`
 }
+
+func (task *Task) OwnerID() *int { return task.UserID }

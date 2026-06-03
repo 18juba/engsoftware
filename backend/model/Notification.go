@@ -4,7 +4,7 @@ import "time"
 
 type Notification struct {
 	ID        int       `json:"id" gorm:"primaryKey"`
-	UserID    int       `json:"user_id" gorm:"not null;index"`
+	UserID    *int      `json:"user_id" gorm:"not null;index"`
 	Title     string    `json:"title" gorm:"not null"`
 	Message   string    `json:"message" gorm:"not null"`
 	Read      bool      `json:"read" gorm:"type:boolean;default:false"`
@@ -12,3 +12,5 @@ type Notification struct {
 
 	User *User `gorm:"foreignKey:UserID" json:"user,omitempty"`
 }
+
+func (notification *Notification) OwnerID() *int { return notification.UserID }
