@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
 	import BottombarPainel from './BottombarPainel.svelte';
 	import { LINKS } from './Links';
+	import UserDropdown from './UserDropdown.svelte';
 
 	let { children } = $props();
 
@@ -60,7 +61,7 @@
 				onClick={toggleUserDropdown}
 			/>{' '}
 			{#if isUserDropdownOpen}
-				<h1>mais opções</h1>
+				<UserDropdown />
 			{/if}
 		</address>
 	</div>
