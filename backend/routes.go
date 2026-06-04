@@ -14,7 +14,6 @@ func setupRoutes(server *gin.Engine, deps *Dependencies, authMiddleware gin.Hand
 	server.GET("/tasks/:id", authMiddleware, deps.TaskController.Show)
 	server.POST("/tasks", authMiddleware, deps.TaskController.Create)
 	server.PUT("/tasks/:id", authMiddleware, deps.TaskController.Update)
-	server.PATCH("/tasks/:id/image", authMiddleware, deps.TaskController.AssignImage)
 	server.DELETE("/tasks/:id", authMiddleware, deps.TaskController.Delete)
 	server.PATCH("/tasks/:id/toggle", authMiddleware, deps.TaskController.Toggle)
 }
