@@ -37,7 +37,6 @@ func (repository *TaskRepository) IndexByUser(userID, page, limit int) ([]model.
 	repository.db.Model(&model.Task{}).Where("user_id = ?", userID).Count(&total)
 
 	result := repository.db.
-		Preload("User").
 		Where("user_id = ?", userID).
 		Order("id DESC").
 		Limit(limit).
@@ -49,7 +48,7 @@ func (repository *TaskRepository) IndexByUser(userID, page, limit int) ([]model.
 
 func (repository *TaskRepository) Show(id string) (model.Task, error) {
 	var task model.Task
-	result := repository.db.Preload("User").Where("id = ?", id).First(&task)
+	result := repository.db.Where("id = ?", id).First(&task)
 	return task, result.Error
 }
 
