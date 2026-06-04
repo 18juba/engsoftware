@@ -10,6 +10,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type CreateTaskRequest struct {
+	Title         string  `json:"title" binding:"required"`
+	Description   string  `json:"description" binding:"required"`
+	ScheduledTime *string `json:"scheduled_time"`
+}
+
 type TaskController struct {
 	taskService service.TaskService
 	userService service.UserService
@@ -71,14 +77,18 @@ func (controller *TaskController) Show(context *gin.Context) {
 }
 
 func (controller *TaskController) Create(context *gin.Context) {
-	var task model.Task
-	if err := context.ShouldBindJSON(&task); err != nil {
+	var request CreateTaskRequest
+	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, model.Response{
 			Code:    http.StatusBadRequest,
 			Message: "Dados inválidos",
 		})
 		return
 	}
+
+	var task model.Task
+	task.Title = request.Title
+	task.Description = request.Description
 
 	if uid, ok := middleware.MustGetUserID(context); ok {
 		id := int(uid)
