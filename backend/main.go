@@ -21,6 +21,8 @@ func main() {
 		log.Fatal("Erro ao carregar arquivo .env")
 	}
 
+	validateEnv()
+
 	dbConnection, err := db.ConnectDB(
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_PORT"),
@@ -44,6 +46,8 @@ func main() {
 	dependencies := setupDependencies(dbConnection)
 
 	server := gin.Default()
+	allowedOrigins := parseOrigins(os.Getenv("CORS_ORIGINS"))
+	server.Use(middleware.CORS(allowedOrigins))
 
 	setupRoutes(server, dependencies, authMiddleware)
 
