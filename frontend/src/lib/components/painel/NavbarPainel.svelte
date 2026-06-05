@@ -19,8 +19,13 @@
 	}
 
 	function isActive(href: string): boolean {
-		const currentPath = page?.url?.pathname || window.location.pathname;
-		return currentPath.includes(`/painel/${href}`);
+	  const currentPath = page.url.pathname;
+
+	  if (href === '/painel') {
+	    return currentPath === href;
+	  }
+
+	  return currentPath.startsWith(href);
 	}
 </script>
 
@@ -76,7 +81,7 @@
 		<nav class="px-2 py-6">
 			<ul class="font2 flex flex-col gap-6">
 				{#each LINKS as item (item.id)}
-					<a href={`/painel/${item.href}`}>
+					<a href={item.href}>
 						<li
 							class={`flex items-center justify-start gap-1 pl-1 font-bold transition-all duration-200
 								${

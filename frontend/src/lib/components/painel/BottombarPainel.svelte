@@ -4,9 +4,13 @@
 	import { LINKS } from './Links';
 
 	function isActive(href: string): boolean {
-		const currentPath = page?.url?.pathname || window.location.pathname;
-		const targetPath = `/painel${href}`;
-		return currentPath.includes(targetPath);
+	  const currentPath = page.url.pathname;
+
+	  if (href === '/painel') {
+	    return currentPath === href;
+	  }
+
+	  return currentPath.startsWith(href);
 	}
 </script>
 
@@ -29,7 +33,7 @@
 		{#each LINKS as item (item.id)}
 			<li>
 				<a
-					href={`/painel/${item.href}`}
+					href={item.href}
 					class="
 						flex flex-col items-center gap-1
 						text-xs
