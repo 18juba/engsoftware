@@ -155,3 +155,22 @@ func (controller *UserController) ChangeCharacter(context *gin.Context) {
 
 	context.JSON(http.StatusOK, input.Character)
 }
+
+func (controller *UserController) Dashboard(context *gin.Context) {
+	user, _, ok := mustGetUser(context, controller.userService)
+	if !ok {
+		return
+	}
+
+	dashboardData, err := controller.userService.Dashboard(user.ID)
+	if err != nil {
+		response := model.Response{
+			Code:    http.StatusInternalServerError,
+			Message: "Erro ao obter dados do dashboard",
+		}
+		context.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	context.JSON(http.StatusOK, dashboardData)
+}
