@@ -93,3 +93,15 @@ func (service *TaskService) Delete(id string) error {
 func (service *TaskService) Toggle(id string) (model.Task, error) {
 	return service.repository.Toggle(id)
 }
+
+func (service *TaskService) StartTask(id string) (model.Task, error) {
+	return service.repository.StartTask(id)
+}
+
+func (service *TaskService) MarkAsComplete(id string) (model.Task, error) {
+	return service.repository.MarkAsComplete(id)
+}
+
+func (service *TaskService) MarkAsCancelled(id string) (model.Task, error) {
+	return service.repository.MarkAsCancelled(id)
+}

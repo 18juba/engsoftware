@@ -208,3 +208,83 @@ func (controller *TaskController) Toggle(context *gin.Context) {
 
 	context.JSON(http.StatusOK, updatedTask)
 }
+
+func (controller *TaskController) StartTask(context *gin.Context) {
+	user, _, ok := mustGetUser(context, controller.userService)
+	if !ok {
+		return
+	}
+
+	id := context.Param("id")
+	task, err := controller.taskService.Show(id)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao buscar tarefa"})
+		return
+	}
+
+	if _, ok := checkAccess(context, user, &task); !ok {
+		return
+	}
+
+	updatedTask, err := controller.taskService.StartTask(id)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao iniciar tarefa"})
+		return
+	}
+
+	context.JSON(http.StatusOK, updatedTask)
+}
+
+func (controller *TaskController) MarkAsComplete(context *gin.Context) {
+	user, _, ok := mustGetUser(context, controller.userService)
+	if !ok {
+		return
+	}
+
+	id := context.Param("id")
+	task, err := controller.taskService.Show(id)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao buscar tarefa"})
+		return
+	}
+
+	if _, ok := checkAccess(context, user, &task); !ok {
+		return
+	}
+
+	updatedTask, err := controller.taskService.MarkAsComplete(id)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao marcar tarefa como completa"})
+		return
+	}
+
+	context.JSON(http.StatusOK, updatedTask)
+}
+
+func (controller *TaskController) MarkAsCancelled(context *gin.Context) {
+	user, _, ok := mustGetUser(context, controller.userService)
+	if !ok {
+		return
+	}
+
+	id := context.Param("id")
+	task, err := controller.taskService.Show(id)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao buscar tarefa"})
+		return
+	}
+
+	if _, ok := checkAccess(context, user, &task); !ok {
+		return
+	}
+
+	updatedTask, err := controller.taskService.MarkAsCancelled(id)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao marcar tarefa como cancelada"})
+		return
+	}
+
+	context.JSON(http.StatusOK, updatedTask)
+}

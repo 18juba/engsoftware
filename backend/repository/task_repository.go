@@ -2,6 +2,7 @@ package repository
 
 import (
 	"backend/model"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -75,6 +76,37 @@ func (repository *TaskRepository) Delete(id string) error {
 func (repository *TaskRepository) Toggle(id string) (model.Task, error) {
 	var task model.Task
 	result := repository.db.Model(&task).Where("id = ?", id).Update("active", gorm.Expr("NOT active"))
+	if result.Error != nil {
+		return task, result.Error
+	}
+	return repository.Show(id)
+}
+
+func (repository *TaskRepository) StartTask(id string) (model.Task, error) {
+	var task model.Task
+	result := repository.db.Model(&task).Where("id = ?", id).Update("status", model.TaskStatusInProgress)
+	if result.Error != nil {
+		return task, result.Error
+	}
+	return repository.Show(id)
+}
+
+func (repository *TaskRepository) MarkAsComplete(id string) (model.Task, error) {
+	var task model.Task
+	updates := map[string]interface{}{
+		"status":          model.TaskStatusCompleted,
+		"completion_time": time.Now(),
+	}
+	result := repository.db.Model(&task).Where("id = ?", id).Updates(updates)
+	if result.Error != nil {
+		return task, result.Error
+	}
+	return repository.Show(id)
+}
+
+func (repository *TaskRepository) MarkAsCancelled(id string) (model.Task, error) {
+	var task model.Task
+	result := repository.db.Model(&task).Where("id = ?", id).Update("status", model.TaskStatusCancelled)
 	if result.Error != nil {
 		return task, result.Error
 	}
