@@ -12,23 +12,23 @@
 	const statusConfig: Record<TaskStatus, { label: string; class: string }> = {
 		scheduled: {
 			label: 'Agendada',
-			class: 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+			class: 'bg-sky-500/20 text-sky-400'
 		},
 		in_progress: {
 			label: 'Em Andamento',
-			class: 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+			class: 'bg-amber-500/20 text-amber-400'
 		},
-		cancelled: { label: 'Cancelada', class: 'bg-red-500/20 text-red-400 border border-red-500/30' },
+		cancelled: { label: 'Cancelada', class: 'bg-red-500/20 text-red-400' },
 		completed: {
-			label: 'Finalizada',
-			class: 'bg-green-500/20 text-green-400 border border-green-500/30'
+			label: 'Concluída',
+			class: 'bg-emerald-500/20 text-emerald-400'
 		}
 	};
 
 	const priorityConfig: Record<TaskPriority, { label: string; class: string }> = {
-		low: { label: 'Baixa', class: 'bg-blue-500/10 text-blue-400 border border-blue-500/20' },
-		medium: { label: 'Média', class: 'bg-amber-500/10 text-amber-400 border border-amber-500/20' },
-		high: { label: 'Alta', class: 'bg-red-500/10 text-red-400 border border-red-500/20' }
+		low: { label: 'Baixa', class: 'bg-sky-500/10 text-sky-400' },
+		medium: { label: 'Média', class: 'bg-amber-500/10 text-amber-400' },
+		high: { label: 'Alta', class: 'bg-red-500/10 text-red-400' }
 	};
 
 	let tarefas = $state<Task[]>([]);
@@ -146,6 +146,8 @@
 				<tr>
 					<th class="px-4 py-2">Tarefa</th>
 					<th class="px-4 py-2">Descrição</th>
+					<th class="px-4 py-2">Prioridade</th>
+					<th class="px-4 py-2">Status</th>
 					<th class="px-4 py-2">Ações</th>
 				</tr>
 			</thead>
@@ -153,9 +155,18 @@
 			<tbody class="divide-y divide-gray-200 text-sm">
 				{#each tarefas as item (item.id)}
 					<tr class="transition hover:bg-(--foreground)/5">
-						<td class="flex items-center gap-4 px-4 py-2">{item.title}</td
-						>
-						<td class="px-4 py-2">{item.description || '-'}</td>
+						<td class="px-4 py-2 truncate">{item.title}</td>
+						<td class="px-4 py-2 truncate">{item.description || '-'}</td>
+						<td class="px-4 py-2">
+							<span class="inline-block rounded-full px-4 py-1 text-xs font-medium {priorityConfig[item.priority]?.class}">
+								{priorityConfig[item.priority]?.label || item.priority}
+							</span>
+						</td>
+						<td class="px-4 py-2">
+							<span class="inline-block rounded-full px-4 py-1 text-xs font-medium {statusConfig[item.status]?.class}">
+								{statusConfig[item.status]?.label || item.status}
+							</span>
+						</td>
 						<td class="px-4 py-2">
 							<div class="flex items-center gap-4">
 								<Icon
@@ -210,7 +221,6 @@
 	</nav>
 	{/if}
 </div>
-
 
 <Dialog
 	bind:open={dialogOpen}

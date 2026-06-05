@@ -8,7 +8,6 @@ export interface Task {
 	scheduled_time: string;
 	completion_time: string | null;
 	status: TaskStatus;
-	prioridade: TaskPriority;
-    completed: boolean;
+	priority: TaskPriority;
     created_at: string;
 }
