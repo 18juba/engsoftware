@@ -55,7 +55,7 @@ export async function apiFetch<T>(url: string, options?: RequestInit): Promise<T
 				message = res.statusText;
 			}
 		}
-		
+
 		if (res.status === 401) {
 			auth.clearToken();
 			goto(resolve('/'));

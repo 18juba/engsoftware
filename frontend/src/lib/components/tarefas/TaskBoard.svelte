@@ -1,9 +1,12 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
-    import { resolve } from '$app/paths';
-    import { onMount } from 'svelte';
-    import { taskIndexPaginated, taskDelete, taskMarkAsComplete, taskMarkAsCancelled, taskStartTask } from '$lib/services/taskService';
-    import type { Task, TaskStatus, TaskPriority } from '$lib/types/task';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { onMount } from 'svelte';
+	import {
+		taskIndexPaginated,
+		taskDelete,
+	} from '$lib/services/taskService';
+	import type { Task, TaskStatus, TaskPriority } from '$lib/types/task';
 	import { toasts } from '$lib/stores/toast';
 	import Icon from '../ui/Icon.svelte';
 	import Dialog from '../ui/Dialog.svelte';
@@ -52,7 +55,7 @@
 		await loadTarefas();
 	});
 
-    	async function loadTarefas(page = currentPage) {
+	async function loadTarefas(page = currentPage) {
 		try {
 			error = null;
 			const response = await taskIndexPaginated(page, itemsPerPage);
@@ -68,7 +71,7 @@
 		}
 	}
 
-    	async function goToPreviousPage() {
+	async function goToPreviousPage() {
 		if (currentPage <= 1) return;
 		await loadTarefas(currentPage - 1);
 	}
@@ -88,11 +91,11 @@
 		modalDetalharOpen = false;
 	}
 
-    function criarNovaTarefa() {
+	function criarNovaTarefa() {
 		goto(resolve('/painel/tarefas/cadastro'));
 	}
 
-    function editarTarefa(tarefa: Task) {
+	function editarTarefa(tarefa: Task) {
 		goto(resolve(`/painel/tarefas/cadastro?id=${tarefa.id}`));
 	}
 
@@ -101,7 +104,7 @@
 		dialogOpen = true;
 	}
 
-		async function confirmDelete() {
+	async function confirmDelete() {
 		if (!tarefaParaDeletar) return;
 
 		try {
@@ -126,15 +129,15 @@
 </script>
 
 <div class="space-y-4">
-    <div class="flex items-center justify-between mb-2">
-	<h2 class="text-2xl font-bold">Minhas Tarefas</h2>
-	<button
-		onclick={criarNovaTarefa}
-		class="w-fit cursor-pointer rounded-lg bg-(--primary) px-4 py-2 font-semibold text-(--foreground) transition-colors duration-200 hover:bg-(--primary)/90"
-	>
-		Criar Tarefa
-	</button>
-    </div>
+	<div class="mb-2 flex items-center justify-between">
+		<h2 class="text-2xl font-bold">Minhas Tarefas</h2>
+		<button
+			onclick={criarNovaTarefa}
+			class="w-fit cursor-pointer rounded-lg bg-(--primary) px-4 py-2 font-semibold text-(--foreground) transition-colors duration-200 hover:bg-(--primary)/90"
+		>
+			Criar Tarefa
+		</button>
+	</div>
 
 	{#if isLoading}
 		<div class="flex items-center justify-center p-8">
@@ -145,86 +148,94 @@
 			<p class="text-white/60">Nenhuma tarefa encontrada</p>
 		</div>
 	{:else}
-	<div class="overflow-x-auto">
-		<table class="min-w-full overflow-hidden rounded-lg">
-			<thead class="bg-(--foreground)/5 text-left text-sm">
-				<tr>
-					<th class="px-4 py-2">Tarefa</th>
-					<th class="px-4 py-2">Descrição</th>
-					<th class="px-4 py-2">Prioridade</th>
-					<th class="px-4 py-2">Status</th>
-					<th class="px-4 py-2">Ações</th>
-				</tr>
-			</thead>
-
-			<tbody class="divide-y divide-gray-200 text-sm">
-				{#each tarefas as item (item.id)}
-					<tr class="transition hover:bg-(--foreground)/5">
-						<td class="px-4 py-2 truncate">{item.title}</td>
-						<td class="px-4 py-2 truncate">{item.description || '-'}</td>
-						<td class="px-4 py-2">
-							<span class="inline-block rounded-full px-4 py-1 text-xs font-medium {priorityConfig[item.priority]?.class}">
-								{priorityConfig[item.priority]?.label || item.priority}
-							</span>
-						</td>
-						<td class="px-4 py-2">
-							<span class="inline-block rounded-full px-4 py-1 text-xs font-medium {statusConfig[item.status]?.class}">
-								{statusConfig[item.status]?.label || item.status}
-							</span>
-						</td>
-						<td class="px-4 py-2">
-							<div class="flex items-center gap-4">
-								<Icon
-									icon="Eye.png"
-									class="h-7 w-7 cursor-pointer"
-									onClick={() => detalharTarefa(item)}
-								/>
-								<Icon
-									icon="Edit.png"
-									class="h-7 w-7 cursor-pointer"
-									onClick={() => editarTarefa(item)}
-								/>
-								<Icon
-									icon="Delete.png"
-									class="h-7 w-7 cursor-pointer"
-									onClick={() => deletarTarefa(item)}
-								/>
-								<TaskActionsDropdown tarefa={item} onStatusChange={() => {}} />
-							</div>
-						</td>
+		<div class="overflow-x-auto">
+			<table class="min-w-full overflow-hidden rounded-lg">
+				<thead class="bg-(--foreground)/5 text-left text-sm">
+					<tr>
+						<th class="px-4 py-2">Tarefa</th>
+						<th class="px-4 py-2">Descrição</th>
+						<th class="px-4 py-2">Prioridade</th>
+						<th class="px-4 py-2">Status</th>
+						<th class="px-4 py-2">Ações</th>
 					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
+				</thead>
 
-	<nav class="mt-4 flex items-center justify-between">
-		<span class="text-sm text-white/60">
-			Mostrando {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} a {Math.min(
-				(currentPage - 1) * itemsPerPage + tarefas.length,
-				totalItems
-			)} de {totalItems}
-		</span>
-		<div class="flex gap-2">
-			<button
-				disabled={currentPage === 1}
-				onclick={goToPreviousPage}
-				class="cursor-pointer rounded-lg bg-(--foreground)/10 px-3 py-2 text-sm text-white transition-colors hover:bg-(--foreground)/20 disabled:cursor-not-allowed disabled:opacity-50"
-			>
-				Anterior
-			</button>
-			<span class="px-3 py-2 text-sm text-white/60">
-				{currentPage} / {totalPages}
-			</span>
-			<button
-				disabled={currentPage === totalPages}
-				onclick={goToNextPage}
-				class="cursor-pointer rounded-lg bg-(--foreground)/10 px-3 py-2 text-sm text-white transition-colors hover:bg-(--foreground)/20 disabled:cursor-not-allowed disabled:opacity-50"
-			>
-				Próxima
-			</button>
+				<tbody class="divide-y divide-gray-200 text-sm">
+					{#each tarefas as item (item.id)}
+						<tr class="transition hover:bg-(--foreground)/5">
+							<td class="truncate px-4 py-2">{item.title}</td>
+							<td class="truncate px-4 py-2">{item.description || '-'}</td>
+							<td class="px-4 py-2">
+								<span
+									class="inline-block rounded-full px-4 py-1 text-xs font-medium {priorityConfig[
+										item.priority
+									]?.class}"
+								>
+									{priorityConfig[item.priority]?.label || item.priority}
+								</span>
+							</td>
+							<td class="px-4 py-2">
+								<span
+									class="inline-block rounded-full px-4 py-1 text-xs font-medium {statusConfig[
+										item.status
+									]?.class}"
+								>
+									{statusConfig[item.status]?.label || item.status}
+								</span>
+							</td>
+							<td class="px-4 py-2">
+								<div class="flex items-center gap-4">
+									<Icon
+										icon="Eye.png"
+										class="h-7 w-7 cursor-pointer"
+										onClick={() => detalharTarefa(item)}
+									/>
+									<Icon
+										icon="Edit.png"
+										class="h-7 w-7 cursor-pointer"
+										onClick={() => editarTarefa(item)}
+									/>
+									<Icon
+										icon="Delete.png"
+										class="h-7 w-7 cursor-pointer"
+										onClick={() => deletarTarefa(item)}
+									/>
+									<TaskActionsDropdown tarefa={item} onStatusChange={() => {}} />
+								</div>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
 		</div>
-	</nav>
+
+		<nav class="mt-4 flex items-center justify-between">
+			<span class="text-sm text-white/60">
+				Mostrando {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} a {Math.min(
+					(currentPage - 1) * itemsPerPage + tarefas.length,
+					totalItems
+				)} de {totalItems}
+			</span>
+			<div class="flex gap-2">
+				<button
+					disabled={currentPage === 1}
+					onclick={goToPreviousPage}
+					class="cursor-pointer rounded-lg bg-(--foreground)/10 px-3 py-2 text-sm text-white transition-colors hover:bg-(--foreground)/20 disabled:cursor-not-allowed disabled:opacity-50"
+				>
+					Anterior
+				</button>
+				<span class="px-3 py-2 text-sm text-white/60">
+					{currentPage} / {totalPages}
+				</span>
+				<button
+					disabled={currentPage === totalPages}
+					onclick={goToNextPage}
+					class="cursor-pointer rounded-lg bg-(--foreground)/10 px-3 py-2 text-sm text-white transition-colors hover:bg-(--foreground)/20 disabled:cursor-not-allowed disabled:opacity-50"
+				>
+					Próxima
+				</button>
+			</div>
+		</nav>
 	{/if}
 </div>
 
@@ -239,4 +250,8 @@
 	onConfirm={confirmDelete}
 />
 
-<ModalDetalharTarefa bind:open={modalDetalharOpen} tarefa={tarefaParaDetalhar} onClose={fecharDetalhes} />
+<ModalDetalharTarefa
+	bind:open={modalDetalharOpen}
+	tarefa={tarefaParaDetalhar}
+	onClose={fecharDetalhes}
+/>

@@ -62,7 +62,7 @@
 			isSaving = true;
 			const taskData = {
 				title: title.trim(),
-				description: description.trim(),
+				description: description.trim()
 			};
 
 			if (isEditMode && tankId) {

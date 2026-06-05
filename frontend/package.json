@@ -4,16 +4,15 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write .",
-		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run"
+		"dev": "bun run vite dev",
+		"build": "bun run vite build",
+		"start": "bun ./build",
+		"preview": "bun run vite preview",
+		"prepare": "bun svelte-kit sync || echo ''",
+		"check": "bun svelte-kit sync && bun svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "bun svelte-kit sync && bun svelte-check --tsconfig ./tsconfig.json --watch",
+		"lint": "bun prettier --check . && bun eslint .",
+		"format": "bun prettier --write ."
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.4",

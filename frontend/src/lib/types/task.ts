@@ -10,5 +10,5 @@ export interface Task {
 	completion_time: string | null;
 	status: TaskStatus;
 	priority: TaskPriority;
-    created_at: string;
+	created_at: string;
 }

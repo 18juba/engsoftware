@@ -4,13 +4,13 @@
 	import { LINKS } from './Links';
 
 	function isActive(href: string): boolean {
-	  const currentPath = page.url.pathname;
+		const currentPath = page.url.pathname;
 
-	  if (href === '/painel') {
-	    return currentPath === href;
-	  }
+		if (href === '/painel') {
+			return currentPath === href;
+		}
 
-	  return currentPath.startsWith(href);
+		return currentPath.startsWith(href);
 	}
 </script>
 
@@ -24,8 +24,8 @@
 		rounded-t-lg
 		border-t-2
 		border-(--foreground)
-        backdrop-blur-xs
-		pb-[env(safe-area-inset-bottom)]
+        pb-[env(safe-area-inset-bottom)]
+		backdrop-blur-xs
 		sm:hidden
 	"
 >
@@ -36,11 +36,11 @@
 					href={item.href}
 					class="
 						flex flex-col items-center gap-1
-						text-xs
-						transition-all
-                        rounded-b
-                        px-1
+						rounded-b
+						px-1
                         pb-0.5
+                        text-xs
+                        transition-all
 						{isActive(item.href) ? 'border-b-2 opacity-100' : 'opacity-70'}
 					"
 				>

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Modal from '$lib/components/ui/Modal.svelte';
-    import type { Task } from '$lib/types/task';
+	import type { Task } from '$lib/types/task';
 
 	interface DetalharTarefaModalProps {
 		open: boolean;
-        tarefa: Task | null;
+		tarefa: Task | null;
 		onClose: () => void;
 	}
 

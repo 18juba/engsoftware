@@ -26,13 +26,13 @@
 	}
 
 	function isActive(href: string): boolean {
-	  const currentPath = page.url.pathname;
+		const currentPath = page.url.pathname;
 
-	  if (href === '/painel') {
-	    return currentPath === href;
-	  }
+		if (href === '/painel') {
+			return currentPath === href;
+		}
 
-	  return currentPath.startsWith(href);
+		return currentPath.startsWith(href);
 	}
 
 	function openProfile(): void {
@@ -46,12 +46,12 @@
 
 	function handleChangeCharacter(character: UserCharacter): void {
 		changeCharacter(character)
-			.then(updatedUserCharacter => {
+			.then((updatedUserCharacter) => {
 				let newUser = user ? { ...user, character: updatedUserCharacter } : null;
 				auth.setUser(newUser);
 				user = newUser;
 			})
-			.catch(error => {
+			.catch((error) => {
 				console.error('Erro ao alterar personagem:', error);
 			});
 	}
@@ -83,7 +83,10 @@
 		</ul>
 
 		<address class="relative flex items-center justify-center gap-2 not-italic sm:gap-3">
-			<Icon icon={`/characters/${user?.character || 'anonymous'}.png`} class="h-8 w-8 sm:h-10 sm:w-10" />
+			<Icon
+				icon={`/characters/${user?.character || 'anonymous'}.png`}
+				class="h-8 w-8 sm:h-10 sm:w-10"
+			/>
 			<div class="flex flex-col">
 				<h2 class="text-xs font-bold sm:text-lg">{user?.name || 'Usuário Anônimo'}</h2>
 				<p class="text-[10px] sm:text-sm">{user?.email}</p>
@@ -94,7 +97,7 @@
 				onClick={toggleUserDropdown}
 			/>{' '}
 			{#if isUserDropdownOpen}
-				<UserDropdown openProfile={openProfile} />
+				<UserDropdown {openProfile} />
 			{/if}
 		</address>
 	</div>
@@ -140,4 +143,9 @@
 	<BottombarPainel />
 </div>
 
-<UserModal open={isUserModalOpen} user={user} onClose={closeProfile} onChangeCharacter={handleChangeCharacter} />
+<UserModal
+	open={isUserModalOpen}
+	{user}
+	onClose={closeProfile}
+	onChangeCharacter={handleChangeCharacter}
+/>
