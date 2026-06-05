@@ -2,12 +2,13 @@
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { onMount } from 'svelte';
-    import { taskIndexPaginated, taskDelete } from '$lib/services/taskService';
+    import { taskIndexPaginated, taskDelete, taskMarkAsComplete, taskMarkAsCancelled, taskStartTask } from '$lib/services/taskService';
     import type { Task, TaskStatus, TaskPriority } from '$lib/types/task';
 	import { toasts } from '$lib/stores/toast';
 	import Icon from '../ui/Icon.svelte';
 	import Dialog from '../ui/Dialog.svelte';
 	import ModalDetalharTarefa from './ModalDetalharTarefa.svelte';
+	import TaskActionsDropdown from './TaskActionsDropdown.svelte';
 
 	const statusConfig: Record<TaskStatus, { label: string; class: string }> = {
 		scheduled: {
@@ -118,6 +119,52 @@
 			tarefaParaDeletar = null;
 		}
 	}
+
+	async function iniciarTarefa(tarefa: Task) {
+	    try {
+	        await taskStartTask(tarefa.id);
+	        tarefa.status = 'in_progress';
+	        toasts.add({
+	            type: 'success',
+	            title: 'Tarefa Iniciada',
+	            description: 'A tarefa foi iniciada com sucesso.'
+	        });
+	    } catch (err) {
+	        error = err instanceof Error ? err.message : 'Erro ao iniciar tarefa';
+	        console.error(err);
+	    }
+	}
+
+	async function marcarComoConcluida(tarefa: Task) {
+	    try {
+	        await taskMarkAsComplete(tarefa.id);
+	        tarefa.status = 'completed';
+			tarefa.completion_time = new Date() as unknown as string;
+	        toasts.add({
+	            type: 'success',
+	            title: 'Tarefa Concluída',
+	            description: 'A tarefa foi marcada como concluída.'
+	        });
+	    } catch (err) {
+	        error = err instanceof Error ? err.message : 'Erro ao marcar tarefa como concluída';
+	        console.error(err);
+	    }
+	}
+
+	async function cancelarTarefa(tarefa: Task) {
+	    try {
+	        await taskMarkAsCancelled(tarefa.id);
+	        tarefa.status = 'cancelled';
+	        toasts.add({
+	            type: 'success',
+	            title: 'Tarefa Cancelada',
+	            description: 'A tarefa foi cancelada com sucesso.'
+	        });
+	    } catch (err) {
+	        error = err instanceof Error ? err.message : 'Erro ao cancelar tarefa';
+	        console.error(err);
+	    }
+	}
 </script>
 
 <div class="space-y-4">
@@ -184,6 +231,7 @@
 									class="h-7 w-7 cursor-pointer"
 									onClick={() => deletarTarefa(item)}
 								/>
+								<TaskActionsDropdown tarefa={item} onStatusChange={() => {}} />
 							</div>
 						</td>
 					</tr>

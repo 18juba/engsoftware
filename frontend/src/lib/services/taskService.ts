@@ -45,3 +45,21 @@ export async function taskToggleActive(id: number) {
 		method: 'PATCH'
 	});
 }
+
+export async function taskStartTask(id: number) {
+	return apiFetch<Task>(`/tasks/${id}/start_task`, {
+		method: 'PATCH'
+	});
+}
+
+export async function taskMarkAsComplete(id: number) {
+	return apiFetch<Task>(`/tasks/${id}/mark_as_complete`, {
+		method: 'PATCH'
+	});
+}
+
+export async function taskMarkAsCancelled(id: number) {
+	return apiFetch<Task>(`/tasks/${id}/mark_as_cancelled`, {
+		method: 'PATCH'
+	});
+}
