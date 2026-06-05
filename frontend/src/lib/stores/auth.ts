@@ -1,4 +1,5 @@
 import { browser } from '$app/environment';
+import type { User } from '$lib/types/user';
 import { writable } from 'svelte/store';
 
 const TOKEN_KEY = 'auth_token';
@@ -22,6 +23,20 @@ function createAuthStore() {
 
 		getToken(): string | null {
 			return browser ? localStorage.getItem(TOKEN_KEY) : null;
+		},
+
+		setUser(user: User) {
+			if (browser) localStorage.setItem('user', JSON.stringify(user));
+		},
+
+		getUser(): User | null {
+			if (!browser) return null;
+			const userJson = localStorage.getItem('user');
+			return userJson ? JSON.parse(userJson) : null;
+		},
+
+		clearUser() {
+			if (browser) localStorage.removeItem('user');
 		}
 	};
 }

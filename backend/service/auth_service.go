@@ -70,18 +70,18 @@ func (service *AuthService) Register(name string, email string, password string,
 	return user, nil
 }
 
-func (service *AuthService) Login(email string, password string) (string, time.Time, error) {
+func (service *AuthService) Login(email string, password string) (string, time.Time, *model.User, error) {
 	normalizedEmail := strings.ToLower(strings.TrimSpace(email))
 	user, err := service.repository.FindByEmail(normalizedEmail)
 	if err != nil {
-		return "", time.Time{}, err
+		return "", time.Time{}, nil, err
 	}
 	if user == nil {
-		return "", time.Time{}, ErrInvalidCredentials
+		return "", time.Time{}, nil, ErrInvalidCredentials
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return "", time.Time{}, ErrInvalidCredentials
+		return "", time.Time{}, nil, ErrInvalidCredentials
 	}
 
 	now := time.Now().UTC()
@@ -97,8 +97,8 @@ func (service *AuthService) Login(email string, password string) (string, time.T
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString(service.jwtSecret)
 	if err != nil {
-		return "", time.Time{}, err
+		return "", time.Time{}, nil, err
 	}
 
-	return signedToken, expiresAt, nil
+	return signedToken, expiresAt, user, nil
 }

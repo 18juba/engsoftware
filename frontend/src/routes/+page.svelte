@@ -56,6 +56,7 @@
 			if (response.status === 200) {
 				const data = await response.json();
 				auth.setToken(data.token);
+				auth.setUser(data.user);
 				toasts.add({
 					type: 'success',
 					title: 'Login realizado',

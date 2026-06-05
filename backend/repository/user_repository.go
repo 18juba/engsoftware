@@ -38,3 +38,14 @@ func (repository *UserRepository) Show(id int) (*model.User, error) {
 	}
 	return &user, nil
 }
+
+func (repository *UserRepository) ChangeCharacter(id int, character model.UserCharacter) error {
+	var user model.User
+	result := repository.db.First(&user, id)
+	if result.Error != nil {
+		return result.Error
+	}
+	user.Character = character
+	result = repository.db.Save(&user)
+	return result.Error
+}

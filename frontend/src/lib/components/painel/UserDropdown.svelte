@@ -5,6 +5,7 @@
 
 	async function logout() {
 		auth.clearToken();
+		auth.clearUser();
 		await goto(resolve('/'));
 	}
 </script>

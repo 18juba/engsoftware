@@ -48,3 +48,7 @@ func (service *UserService) Store(user model.User) (model.User, error) {
 
 	return user, nil
 }
+
+func (service *UserService) ChangeCharacter(id int, character model.UserCharacter) error {
+	return service.repository.ChangeCharacter(id, character)
+}

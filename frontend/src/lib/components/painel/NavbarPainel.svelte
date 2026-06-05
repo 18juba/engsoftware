@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { auth } from '$lib/stores/auth';
 	import Icon from '../ui/Icon.svelte';
 	import { page } from '$app/state';
 	import BottombarPainel from './BottombarPainel.svelte';
@@ -6,6 +7,8 @@
 	import UserDropdown from './UserDropdown.svelte';
 
 	let { children } = $props();
+
+	let user = $state(auth.getUser());
 
 	let isSidebarOpen = $state(true);
 	let isUserDropdownOpen = $state(false);
@@ -55,10 +58,10 @@
 		</ul>
 
 		<address class="relative flex items-center justify-center gap-2 not-italic sm:gap-3">
-			<Icon icon="/characters/homersimpson.png" class="h-8 w-8 sm:h-10 sm:w-10" />
+			<Icon icon={`/characters/${user?.character || 'anonymous'}.png`} class="h-8 w-8 sm:h-10 sm:w-10" />
 			<div class="flex flex-col">
-				<h2 class="text-xs font-bold sm:text-lg">lucas</h2>
-				<p class="text-[10px] sm:text-sm">lucas@gmail.com</p>
+				<h2 class="text-xs font-bold sm:text-lg">{user?.name || 'Usuário Anônimo'}</h2>
+				<p class="text-[10px] sm:text-sm">{user?.email}</p>
 			</div>
 			<Icon
 				icon={isUserDropdownOpen ? '/ArrowUp.png' : '/ArrowDown.png'}

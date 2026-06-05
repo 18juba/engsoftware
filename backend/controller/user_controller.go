@@ -15,6 +15,10 @@ type UserInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type ChangeCharacterInput struct {
+	Character model.UserCharacter `json:"character" binding:"required"`
+}
+
 type UserController struct {
 	userService service.UserService
 }
@@ -122,4 +126,35 @@ func (controller *UserController) Show(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, user)
+}
+
+func (controller *UserController) ChangeCharacter(context *gin.Context) {
+	user, _, ok := mustGetUser(context, controller.userService)
+	if !ok {
+		return
+	}
+
+	var input ChangeCharacterInput
+	if err := context.BindJSON(&input); err != nil {
+		response := model.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Erro ao validar",
+		}
+		context.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	if err := controller.userService.ChangeCharacter(user.ID, input.Character); err != nil {
+		response := model.Response{
+			Code:    http.StatusInternalServerError,
+			Message: "Erro ao alterar personagem do usuário",
+		}
+		context.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	context.JSON(http.StatusOK, model.Response{
+		Code:    http.StatusOK,
+		Message: "Personagem alterada com sucesso",
+	})
 }

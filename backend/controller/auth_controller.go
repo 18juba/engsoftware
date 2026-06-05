@@ -86,7 +86,7 @@ func (a *AuthController) Login(context *gin.Context) {
 		return
 	}
 
-	token, expiresAt, err := a.auth_service.Login(input.Email, input.Password)
+	token, expiresAt, user, err := a.auth_service.Login(input.Email, input.Password)
 	if err != nil {
 		if err == service.ErrInvalidCredentials {
 			response := model.Response{
@@ -108,6 +108,7 @@ func (a *AuthController) Login(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{
 		"token":     token,
 		"expiresAt": expiresAt,
+		"user":      user,
 	})
 }
 
