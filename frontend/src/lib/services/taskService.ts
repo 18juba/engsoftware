@@ -63,3 +63,9 @@ export async function taskMarkAsCancelled(id: number) {
 		method: 'PATCH'
 	});
 }
+
+export async function taskPauseTask(id: number) {
+	return apiFetch<Task>(`/tasks/${id}/pause_task`, {
+		method: 'PATCH'
+	});
+}

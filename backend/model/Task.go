@@ -10,6 +10,7 @@ const (
 	TaskStatusInProgress TaskStatus = "in_progress"
 	TaskStatusCancelled  TaskStatus = "cancelled"
 	TaskStatusCompleted  TaskStatus = "completed"
+	TaskStatusPaused     TaskStatus = "paused"
 
 	TaskPriorityLow    TaskPriority = "low"
 	TaskPriorityMedium TaskPriority = "medium"
@@ -23,7 +24,7 @@ type Task struct {
 	Description    string       `json:"description" gorm:"type:text"`
 	ScheduledTime  time.Time    `json:"scheduled_time" gorm:"not null"`
 	CompletionTime *time.Time   `json:"completion_time"`
-	Status         TaskStatus   `json:"status" gorm:"type:varchar(20);check:status IN ('scheduled','in_progress','cancelled','completed');default:'scheduled'"`
+	Status         TaskStatus   `json:"status" gorm:"type:varchar(20);check:status IN ('scheduled','in_progress','cancelled','completed','paused');default:'scheduled'"`
 	Priority       TaskPriority `json:"priority" gorm:"type:varchar(20);check:priority IN ('low','medium','high');default:'medium'"`
 	CreatedAt      time.Time    `json:"created_at" gorm:"autoCreateTime"`
 

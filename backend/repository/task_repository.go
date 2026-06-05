@@ -112,3 +112,13 @@ func (repository *TaskRepository) MarkAsCancelled(id string) (model.Task, error)
 	}
 	return repository.Show(id)
 }
+
+func (repository *TaskRepository) PauseTask(id string) (model.Task, error) {
+	var task model.Task
+	result := repository.db.Model(&task).Where("id = ?", id).Update("status", model.TaskStatusPaused)
+	if result.Error != nil {
+		return task, result.Error
+	}
+
+	return repository.Show(id)
+}

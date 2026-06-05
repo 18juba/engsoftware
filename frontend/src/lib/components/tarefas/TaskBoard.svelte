@@ -13,16 +13,20 @@
 	const statusConfig: Record<TaskStatus, { label: string; class: string }> = {
 		scheduled: {
 			label: 'Agendada',
-			class: 'bg-sky-500/20 text-sky-400'
+			class: 'bg-neutral-500/20 text-neutral-400'
 		},
 		in_progress: {
 			label: 'Em Andamento',
-			class: 'bg-amber-500/20 text-amber-400'
+			class: 'bg-sky-500/20 text-sky-400'
 		},
 		cancelled: { label: 'Cancelada', class: 'bg-red-500/20 text-red-400' },
 		completed: {
 			label: 'Concluída',
 			class: 'bg-emerald-500/20 text-emerald-400'
+		},
+		paused: {
+			label: 'Pausada',
+			class: 'bg-slate-500/20 text-slate-400'
 		}
 	};
 
@@ -118,52 +122,6 @@
 			dialogOpen = false;
 			tarefaParaDeletar = null;
 		}
-	}
-
-	async function iniciarTarefa(tarefa: Task) {
-	    try {
-	        await taskStartTask(tarefa.id);
-	        tarefa.status = 'in_progress';
-	        toasts.add({
-	            type: 'success',
-	            title: 'Tarefa Iniciada',
-	            description: 'A tarefa foi iniciada com sucesso.'
-	        });
-	    } catch (err) {
-	        error = err instanceof Error ? err.message : 'Erro ao iniciar tarefa';
-	        console.error(err);
-	    }
-	}
-
-	async function marcarComoConcluida(tarefa: Task) {
-	    try {
-	        await taskMarkAsComplete(tarefa.id);
-	        tarefa.status = 'completed';
-			tarefa.completion_time = new Date() as unknown as string;
-	        toasts.add({
-	            type: 'success',
-	            title: 'Tarefa Concluída',
-	            description: 'A tarefa foi marcada como concluída.'
-	        });
-	    } catch (err) {
-	        error = err instanceof Error ? err.message : 'Erro ao marcar tarefa como concluída';
-	        console.error(err);
-	    }
-	}
-
-	async function cancelarTarefa(tarefa: Task) {
-	    try {
-	        await taskMarkAsCancelled(tarefa.id);
-	        tarefa.status = 'cancelled';
-	        toasts.add({
-	            type: 'success',
-	            title: 'Tarefa Cancelada',
-	            description: 'A tarefa foi cancelada com sucesso.'
-	        });
-	    } catch (err) {
-	        error = err instanceof Error ? err.message : 'Erro ao cancelar tarefa';
-	        console.error(err);
-	    }
 	}
 </script>
 

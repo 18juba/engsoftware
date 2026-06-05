@@ -19,5 +19,7 @@ func setupRoutes(server *gin.Engine, deps *Dependencies, authMiddleware gin.Hand
 	server.PATCH("/tasks/:id/start_task", authMiddleware, deps.TaskController.StartTask)
 	server.PATCH("/tasks/:id/mark_as_complete", authMiddleware, deps.TaskController.MarkAsComplete)
 	server.PATCH("/tasks/:id/mark_as_cancelled", authMiddleware, deps.TaskController.MarkAsCancelled)
+	server.PATCH("/tasks/:id/pause_task", authMiddleware, deps.TaskController.PauseTask)
+
 	server.PATCH("/users/change_character", authMiddleware, deps.UserController.ChangeCharacter)
 }

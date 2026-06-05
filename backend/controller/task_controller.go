@@ -288,3 +288,29 @@ func (controller *TaskController) MarkAsCancelled(context *gin.Context) {
 
 	context.JSON(http.StatusOK, updatedTask)
 }
+
+func (controller *TaskController) PauseTask(context *gin.Context) {
+	user, _, ok := mustGetUser(context, controller.userService)
+	if !ok {
+		return
+	}
+
+	id := context.Param("id")
+	task, err := controller.taskService.Show(id)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao buscar tarefa"})
+		return
+	}
+
+	if _, ok := checkAccess(context, user, &task); !ok {
+		return
+	}
+
+	updatedTask, err := controller.taskService.PauseTask(id)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao pausar tarefa"})
+		return
+	}
+
+	context.JSON(http.StatusOK, updatedTask)
+}

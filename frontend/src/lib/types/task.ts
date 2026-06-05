@@ -1,4 +1,4 @@
-export type TaskStatus = 'scheduled' | 'in_progress' | 'cancelled' | 'completed';
+export type TaskStatus = 'scheduled' | 'in_progress' | 'cancelled' | 'completed' | 'paused';
 export type TaskPriority = 'low' | 'medium' | 'high';
 
 export interface Task {

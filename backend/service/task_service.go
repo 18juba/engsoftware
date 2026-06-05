@@ -105,3 +105,7 @@ func (service *TaskService) MarkAsComplete(id string) (model.Task, error) {
 func (service *TaskService) MarkAsCancelled(id string) (model.Task, error) {
 	return service.repository.MarkAsCancelled(id)
 }
+
+func (service *TaskService) PauseTask(id string) (model.Task, error) {
+	return service.repository.PauseTask(id)
+}
