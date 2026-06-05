@@ -88,6 +88,7 @@
 				if (loginResponse.status === 200) {
 					const data = await loginResponse.json();
 					auth.setToken(data.token);
+					auth.setUser(data.user);
 					await goto(resolve('/painel'));
 					return;
 				}
