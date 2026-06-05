@@ -8,7 +8,7 @@ export let LINKS = [
 	{
 		id: 2,
 		label: 'Tarefas',
-		href: '/tarefas',
+		href: 'tarefas',
 		icon: '/Task.png'
 	},
 ];
