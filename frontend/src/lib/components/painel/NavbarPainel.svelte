@@ -11,7 +11,9 @@
 
 	let { children } = $props();
 
-	let user = $state(auth.getUser());
+	const userStore = auth.user;
+
+	let user = $derived($userStore);
 
 	let isSidebarOpen = $state(true);
 	let isUserDropdownOpen = $state(false);
@@ -83,10 +85,12 @@
 		</ul>
 
 		<address class="relative flex items-center justify-center gap-2 not-italic sm:gap-3">
-			<Icon
-				icon={`/characters/${user?.character || 'anonymous'}.png`}
-				class="h-8 w-8 sm:h-10 sm:w-10"
-			/>
+			{#if user}
+				<Icon icon={`/characters/${user?.character}.png`} class="h-8 w-8 sm:h-10 sm:w-10" />
+			{:else}
+				<Icon icon={`/characters/anonymous.png`} class="h-8 w-8 sm:h-10 sm:w-10" />
+			{/if}
+
 			<div class="flex flex-col">
 				<h2 class="text-xs font-bold sm:text-lg">{user?.name || 'Usuário Anônimo'}</h2>
 				<p class="text-[10px] sm:text-sm">{user?.email}</p>
