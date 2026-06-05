@@ -1,4 +1,5 @@
 export type TaskStatus = 'scheduled' | 'in_progress' | 'cancelled' | 'completed' | 'paused';
+export type ToDoTaskStatus = 'in_progress' | 'scheduled' | 'paused';
 export type TaskPriority = 'low' | 'medium' | 'high';
 
 export interface Task {

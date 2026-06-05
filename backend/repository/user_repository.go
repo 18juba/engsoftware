@@ -10,8 +10,14 @@ type UserRepository struct {
 	db *gorm.DB
 }
 
+type ToDoTaskAnalysis struct {
+	Status string `json:"status"`
+	Count  int64  `json:"count"`
+}
+
 type UserDashboardResponse struct {
-	TotalCompletedTasks int64 `json:"total_completed_tasks"`
+	ToDoTasksTotal    int64              `json:"to_do_tasks_total"`
+	ToDoTasksAnalysis []ToDoTaskAnalysis `json:"to_do_tasks_analysis"`
 }
 
 func NewUserRepository(db *gorm.DB) UserRepository {
@@ -55,10 +61,30 @@ func (repository *UserRepository) ChangeCharacter(id int, character model.UserCh
 }
 
 func (repository *UserRepository) Dashboard(userID int) (UserDashboardResponse, error) {
-	var completedTasksCount int64
-	result := repository.db.Model(&model.Task{}).Where("user_id = ? AND status = ?", userID, "completed").Count(&completedTasksCount)
+	var analysis []ToDoTaskAnalysis
+
+	result := repository.db.
+		Model(&model.Task{}).
+		Select("status, COUNT(*) as count").
+		Where("user_id = ? AND status IN ?", userID, []string{
+			"in_progress",
+			"scheduled",
+			"paused",
+		}).
+		Group("status").
+		Scan(&analysis)
+
 	if result.Error != nil {
 		return UserDashboardResponse{}, result.Error
 	}
-	return UserDashboardResponse{TotalCompletedTasks: int64(completedTasksCount)}, nil
+
+	var total int64
+	for _, item := range analysis {
+		total += item.Count
+	}
+
+	return UserDashboardResponse{
+		ToDoTasksTotal:    total,
+		ToDoTasksAnalysis: analysis,
+	}, nil
 }
