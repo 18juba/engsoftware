@@ -2,8 +2,12 @@
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { onMount } from 'svelte';
-    import { taskIndexPaginated } from '$lib/services/taskService';
+    import { taskIndexPaginated, taskDelete } from '$lib/services/taskService';
     import type { Task, TaskStatus, TaskPriority } from '$lib/types/task';
+	import { toasts } from '$lib/stores/toast';
+	import Icon from '../ui/Icon.svelte';
+	import Dialog from '../ui/Dialog.svelte';
+	import ModalDetalharTarefa from './ModalDetalharTarefa.svelte';
 
 	const statusConfig: Record<TaskStatus, { label: string; class: string }> = {
 		scheduled: {
@@ -34,6 +38,10 @@
 	let totalItems = $state(0);
 	let totalPages = $state(1);
 	const itemsPerPage = 10;
+	let tarefaParaDeletar = $state<Task | null>(null);
+	let tarefaParaDetalhar = $state<Task | null>(null);
+	let modalDetalharOpen = $state(false);
+	let dialogOpen = $state(false);
 
 	onMount(async () => {
 		await loadTarefas();
@@ -65,12 +73,50 @@
 		await loadTarefas(currentPage + 1);
 	}
 
+	function detalharTarefa(tarefa: Task) {
+		tarefaParaDetalhar = tarefa;
+		modalDetalharOpen = true;
+	}
+
+	function fecharDetalhes() {
+		tarefaParaDetalhar = null;
+		modalDetalharOpen = false;
+	}
+
     function criarNovaTarefa() {
 		goto(resolve('/painel/tarefas/cadastro'));
 	}
 
     function editarTarefa(tarefa: Task) {
 		goto(resolve(`/painel/tarefas/cadastro?id=${tarefa.id}`));
+	}
+
+	async function deletarTarefa(tarefa: Task) {
+		tarefaParaDeletar = tarefa;
+		dialogOpen = true;
+	}
+
+		async function confirmDelete() {
+		if (!tarefaParaDeletar) return;
+
+		try {
+			await taskDelete(tarefaParaDeletar.id);
+
+			const targetPage = tarefas.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage;
+			await loadTarefas(targetPage);
+
+			toasts.add({
+				type: 'success',
+				title: 'Tarefa Deletada',
+				description: 'A tarefa foi deletada com sucesso.'
+			});
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Erro ao deletar tarefa';
+			console.error('Erro ao deletar tarefa:', err);
+		} finally {
+			dialogOpen = false;
+			tarefaParaDeletar = null;
+		}
 	}
 </script>
 
@@ -112,7 +158,21 @@
 						<td class="px-4 py-2">{item.description || '-'}</td>
 						<td class="px-4 py-2">
 							<div class="flex items-center gap-4">
-
+								<Icon
+									icon="Eye.png"
+									class="h-7 w-7 cursor-pointer"
+									onClick={() => detalharTarefa(item)}
+								/>
+								<Icon
+									icon="Edit.png"
+									class="h-7 w-7 cursor-pointer"
+									onClick={() => editarTarefa(item)}
+								/>
+								<Icon
+									icon="Delete.png"
+									class="h-7 w-7 cursor-pointer"
+									onClick={() => deletarTarefa(item)}
+								/>
 							</div>
 						</td>
 					</tr>
@@ -150,3 +210,17 @@
 	</nav>
 	{/if}
 </div>
+
+
+<Dialog
+	bind:open={dialogOpen}
+	title="Deletar Tarefa"
+	description={tarefaParaDeletar ? `Deseja mesmo deletar a tarefa #${tarefaParaDeletar.id} ?` : ''}
+	onClose={() => {
+		dialogOpen = false;
+		tarefaParaDeletar = null;
+	}}
+	onConfirm={confirmDelete}
+/>
+
+<ModalDetalharTarefa bind:open={modalDetalharOpen} tarefa={tarefaParaDetalhar} onClose={fecharDetalhes} />
