@@ -153,8 +153,5 @@ func (controller *UserController) ChangeCharacter(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, model.Response{
-		Code:    http.StatusOK,
-		Message: "Personagem alterada com sucesso",
-	})
+	context.JSON(http.StatusOK, input.Character)
 }

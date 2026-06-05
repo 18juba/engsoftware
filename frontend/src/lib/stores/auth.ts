@@ -25,7 +25,7 @@ function createAuthStore() {
 			return browser ? localStorage.getItem(TOKEN_KEY) : null;
 		},
 
-		setUser(user: User) {
+		setUser(user: User | null) {
 			if (browser) localStorage.setItem('user', JSON.stringify(user));
 		},
 

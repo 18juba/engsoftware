@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { auth } from '$lib/stores/auth';
+	import type { UserCharacter } from '$lib/types/user';
+	import { changeCharacter } from '$lib/services/userService';
 	import Icon from '../ui/Icon.svelte';
 	import { page } from '$app/state';
 	import BottombarPainel from './BottombarPainel.svelte';
 	import { LINKS } from './Links';
 	import UserDropdown from './UserDropdown.svelte';
+	import UserModal from '../modals/UserModal.svelte';
 
 	let { children } = $props();
 
@@ -12,6 +15,7 @@
 
 	let isSidebarOpen = $state(true);
 	let isUserDropdownOpen = $state(false);
+	let isUserModalOpen = $state(false);
 
 	function toggleUserDropdown() {
 		isUserDropdownOpen = !isUserDropdownOpen;
@@ -29,6 +33,27 @@
 	  }
 
 	  return currentPath.startsWith(href);
+	}
+
+	function openProfile(): void {
+		isUserModalOpen = true;
+		isUserDropdownOpen = false;
+	}
+
+	function closeProfile(): void {
+		isUserModalOpen = false;
+	}
+
+	function handleChangeCharacter(character: UserCharacter): void {
+		changeCharacter(character)
+			.then(updatedUserCharacter => {
+				let newUser = user ? { ...user, character: updatedUserCharacter } : null;
+				auth.setUser(newUser);
+				user = newUser;
+			})
+			.catch(error => {
+				console.error('Erro ao alterar personagem:', error);
+			});
 	}
 </script>
 
@@ -69,7 +94,7 @@
 				onClick={toggleUserDropdown}
 			/>{' '}
 			{#if isUserDropdownOpen}
-				<UserDropdown />
+				<UserDropdown openProfile={openProfile} />
 			{/if}
 		</address>
 	</div>
@@ -114,3 +139,5 @@
 
 	<BottombarPainel />
 </div>
+
+<UserModal open={isUserModalOpen} user={user} onClose={closeProfile} onChangeCharacter={handleChangeCharacter} />
