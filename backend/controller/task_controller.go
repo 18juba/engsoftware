@@ -11,17 +11,15 @@ import (
 )
 
 type CreateTaskRequest struct {
-	Title         string              `json:"title" binding:"required"`
-	Description   string              `json:"description" binding:"required"`
-	ScheduledTime *string             `json:"scheduled_time"`
-	Priority      *model.TaskPriority `json:"priority"`
+	Title         string  `json:"title" binding:"required"`
+	Description   string  `json:"description" binding:"required"`
+	ScheduledTime *string `json:"scheduled_time"`
 }
 
 type UpdateTaskRequest struct {
-	Title         string              `json:"title"`
-	Description   string              `json:"description"`
-	ScheduledTime *string             `json:"scheduled_time"`
-	Priority      *model.TaskPriority `json:"priority"`
+	Title         string  `json:"title"`
+	Description   string  `json:"description"`
+	ScheduledTime *string `json:"scheduled_time"`
 }
 
 type TaskController struct {
@@ -37,11 +35,6 @@ func NewTaskController(task_service service.TaskService, user_service service.Us
 }
 
 func (controller *TaskController) Index(context *gin.Context) {
-	user, userID, ok := mustGetUser(context, controller.userService)
-	if !ok {
-		return
-	}
-
 	page, _ := strconv.Atoi(context.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(context.DefaultQuery("limit", "20"))
 
@@ -50,11 +43,7 @@ func (controller *TaskController) Index(context *gin.Context) {
 		err    error
 	)
 
-	if user.Type == model.Admin {
-		result, err = controller.taskService.Index(page, limit)
-	} else {
-		result, err = controller.taskService.IndexByUser(userID, page, limit)
-	}
+	result, err = controller.taskService.Index(page, limit)
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao listar tarefas"})
@@ -65,19 +54,10 @@ func (controller *TaskController) Index(context *gin.Context) {
 }
 
 func (controller *TaskController) Show(context *gin.Context) {
-	user, _, ok := mustGetUser(context, controller.userService)
-	if !ok {
-		return
-	}
-
 	id := context.Param("id")
 	task, err := controller.taskService.Show(id)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao exibir tarefa"})
-		return
-	}
-
-	if _, ok := checkAccess(context, user, &task); !ok {
 		return
 	}
 
@@ -100,7 +80,7 @@ func (controller *TaskController) Create(context *gin.Context) {
 
 	if uid, ok := middleware.MustGetUserID(context); ok {
 		id := int(uid)
-		task.UserID = &id
+		task.ClassID = id
 	}
 
 	createdTask, err := controller.taskService.Store(task)
@@ -115,21 +95,7 @@ func (controller *TaskController) Create(context *gin.Context) {
 }
 
 func (controller *TaskController) Update(context *gin.Context) {
-	user, _, ok := mustGetUser(context, controller.userService)
-	if !ok {
-		return
-	}
-
 	id := context.Param("id")
-	task, err := controller.taskService.Show(id)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao buscar tarefa"})
-		return
-	}
-
-	if _, ok := checkAccess(context, user, &task); !ok {
-		return
-	}
 
 	var request UpdateTaskRequest
 
@@ -141,7 +107,6 @@ func (controller *TaskController) Update(context *gin.Context) {
 	updates := map[string]interface{}{
 		"title":       request.Title,
 		"description": request.Description,
-		"priority":    request.Priority,
 	}
 
 	if err := controller.taskService.UpdateWithMap(id, updates); err != nil {
@@ -159,21 +124,7 @@ func (controller *TaskController) Update(context *gin.Context) {
 }
 
 func (controller *TaskController) Delete(context *gin.Context) {
-	user, _, ok := mustGetUser(context, controller.userService)
-	if !ok {
-		return
-	}
-
 	id := context.Param("id")
-	task, err := controller.taskService.Show(id)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao buscar tarefa"})
-		return
-	}
-
-	if _, ok := checkAccess(context, user, &task); !ok {
-		return
-	}
 
 	if err := controller.taskService.Delete(id); err != nil {
 		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao excluir tarefa"})
@@ -184,21 +135,7 @@ func (controller *TaskController) Delete(context *gin.Context) {
 }
 
 func (controller *TaskController) Toggle(context *gin.Context) {
-	user, _, ok := mustGetUser(context, controller.userService)
-	if !ok {
-		return
-	}
-
 	id := context.Param("id")
-	task, err := controller.taskService.Show(id)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao buscar tarefa"})
-		return
-	}
-
-	if _, ok := checkAccess(context, user, &task); !ok {
-		return
-	}
 
 	updatedTask, err := controller.taskService.Toggle(id)
 	if err != nil {
@@ -210,21 +147,7 @@ func (controller *TaskController) Toggle(context *gin.Context) {
 }
 
 func (controller *TaskController) StartTask(context *gin.Context) {
-	user, _, ok := mustGetUser(context, controller.userService)
-	if !ok {
-		return
-	}
-
 	id := context.Param("id")
-	task, err := controller.taskService.Show(id)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao buscar tarefa"})
-		return
-	}
-
-	if _, ok := checkAccess(context, user, &task); !ok {
-		return
-	}
 
 	updatedTask, err := controller.taskService.StartTask(id)
 	if err != nil {
@@ -236,22 +159,7 @@ func (controller *TaskController) StartTask(context *gin.Context) {
 }
 
 func (controller *TaskController) MarkAsComplete(context *gin.Context) {
-	user, _, ok := mustGetUser(context, controller.userService)
-	if !ok {
-		return
-	}
-
 	id := context.Param("id")
-	task, err := controller.taskService.Show(id)
-
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao buscar tarefa"})
-		return
-	}
-
-	if _, ok := checkAccess(context, user, &task); !ok {
-		return
-	}
 
 	updatedTask, err := controller.taskService.MarkAsComplete(id)
 	if err != nil {
@@ -263,22 +171,7 @@ func (controller *TaskController) MarkAsComplete(context *gin.Context) {
 }
 
 func (controller *TaskController) MarkAsCancelled(context *gin.Context) {
-	user, _, ok := mustGetUser(context, controller.userService)
-	if !ok {
-		return
-	}
-
 	id := context.Param("id")
-	task, err := controller.taskService.Show(id)
-
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao buscar tarefa"})
-		return
-	}
-
-	if _, ok := checkAccess(context, user, &task); !ok {
-		return
-	}
 
 	updatedTask, err := controller.taskService.MarkAsCancelled(id)
 	if err != nil {
@@ -290,21 +183,7 @@ func (controller *TaskController) MarkAsCancelled(context *gin.Context) {
 }
 
 func (controller *TaskController) PauseTask(context *gin.Context) {
-	user, _, ok := mustGetUser(context, controller.userService)
-	if !ok {
-		return
-	}
-
 	id := context.Param("id")
-	task, err := controller.taskService.Show(id)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, model.Response{Code: http.StatusInternalServerError, Message: "Erro ao buscar tarefa"})
-		return
-	}
-
-	if _, ok := checkAccess(context, user, &task); !ok {
-		return
-	}
 
 	updatedTask, err := controller.taskService.PauseTask(id)
 	if err != nil {

@@ -12,5 +12,3 @@ type Notification struct {
 
 	User *User `gorm:"foreignKey:UserID" json:"user,omitempty"`
 }
-
-func (notification *Notification) OwnerID() *int { return notification.UserID }

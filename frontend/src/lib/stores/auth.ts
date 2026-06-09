@@ -14,7 +14,7 @@ function createAuthStore() {
 
 	return {
 		subscribe,
-		user: userStore, // 👈 expõe a store diretamente
+		user: userStore,
 		setToken(token: string) {
 			if (browser) localStorage.setItem(TOKEN_KEY, token);
 			set(token);

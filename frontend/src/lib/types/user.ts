@@ -1,4 +1,4 @@
-import type { Task, ToDoTaskStatus } from './task';
+import type { ToDoTaskStatus } from './task';
 import type { Notification } from './notification';
 
 export type User = {
@@ -10,11 +10,18 @@ export type User = {
 	whatsapp?: string;
 	active: boolean;
 	created_at: string;
-	tasks?: Task[];
 	notifications?: Notification[];
 };
 
-export type UserType = 'admin' | 'customer';
+export type UserType = 'admin' | 'teacher' | 'student';
+
+export type UserTeacher = User & {
+	department: string;	
+};
+
+export type UserStudent = User & {
+	registry: string;
+};
 
 export type UserCharacter =
 	| 'anonymous'

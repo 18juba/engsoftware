@@ -1,6 +1,5 @@
 export type TaskStatus = 'scheduled' | 'in_progress' | 'cancelled' | 'completed' | 'paused';
 export type ToDoTaskStatus = 'in_progress' | 'scheduled' | 'paused';
-export type TaskPriority = 'low' | 'medium' | 'high';
 
 export interface Task {
 	id: number;
@@ -9,6 +8,5 @@ export interface Task {
 	scheduled_time: string;
 	completion_time: string | null;
 	status: TaskStatus;
-	priority: TaskPriority;
 	created_at: string;
 }

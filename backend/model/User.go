@@ -8,6 +8,7 @@ type UserCharacter string
 const (
 	Admin    UserType = "admin"
 	Customer UserType = "customer"
+	Teacher  UserType = "teacher"
 )
 
 const (
@@ -35,7 +36,7 @@ const (
 
 type User struct {
 	ID            int            `json:"id" gorm:"primaryKey"`
-	Type          UserType       `json:"type" gorm:"type:varchar(20);check:type IN ('admin','customer');default:'customer'"`
+	Type          UserType       `json:"type" gorm:"type:varchar(20);check:type IN ('teacher','student','admin');default:'student'"`
 	Character     UserCharacter  `json:"character" gorm:"type:varchar(20);check:character IN ('anonymous', 'bender', 'creeper', 'doge', 'flameprincess', 'freddy', 'hellokitty', 'homersimpson', 'ironman', 'jake', 'jason', 'joker', 'luigi', 'mario', 'melody', 'minecraft', 'monalisa', 'princessbubblegum', 'scream', 'troll');default:'homersimpson'"`
 	Name          string         `json:"name" gorm:"not null"`
 	Email         string         `json:"email" gorm:"uniqueIndex"`
@@ -43,6 +44,5 @@ type User struct {
 	Whatsapp      *string        `json:"whatsapp"`
 	Active        bool           `json:"active" gorm:"default:true"`
 	CreatedAt     time.Time      `json:"created_at" gorm:"autoCreateTime"`
-	Tasks         []Task         `gorm:"foreignKey:UserID" json:"tasks,omitempty"`
 	Notifications []Notification `gorm:"foreignKey:UserID" json:"notifications,omitempty"`
 }
