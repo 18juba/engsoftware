@@ -22,6 +22,4 @@ type Task struct {
 	CompletionTime *time.Time `json:"completion_time"`
 	Status         TaskStatus `json:"status" gorm:"type:varchar(20);check:status IN ('scheduled','in_progress','cancelled','completed','paused');default:'scheduled'"`
 	CreatedAt      time.Time  `json:"created_at" gorm:"autoCreateTime"`
-
-	User *User `gorm:"foreignKey:UserID" json:"user,omitempty"`
 }

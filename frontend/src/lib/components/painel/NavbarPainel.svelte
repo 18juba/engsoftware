@@ -81,14 +81,14 @@
 		</address>
 
 		<ul class="flex gap-6 sm:gap-8">
-			<!-- <Icon icon="/Whatsapp.png" class="h-6 w-6 hover:scale-105 sm:h-8 sm:w-8" /> -->
+			<!-- <Icon icon="Whatsapp.png" class="h-6 w-6 hover:scale-105 sm:h-8 sm:w-8" /> -->
 		</ul>
 
 		<address class="relative flex items-center justify-center gap-2 not-italic sm:gap-3">
 			{#if user}
-				<Icon icon={`/characters/${user?.character}.png`} class="h-8 w-8 sm:h-10 sm:w-10" />
+				<Icon icon={`characters/${user?.character}.png`} class="h-8 w-8 sm:h-10 sm:w-10" />
 			{:else}
-				<Icon icon={`/characters/anonymous.png`} class="h-8 w-8 sm:h-10 sm:w-10" />
+				<Icon icon={`characters/anonymous.png`} class="h-8 w-8 sm:h-10 sm:w-10" />
 			{/if}
 
 			<div class="flex flex-col">
@@ -96,7 +96,7 @@
 				<p class="text-[10px] sm:text-sm">{user?.email}</p>
 			</div>
 			<Icon
-				icon={isUserDropdownOpen ? '/ArrowUp.png' : '/ArrowDown.png'}
+				icon={isUserDropdownOpen ? 'ArrowUp.png' : 'ArrowDown.png'}
 				class="h-8 w-8 cursor-pointer hover:scale-105 sm:ml-4"
 				onClick={toggleUserDropdown}
 			/>{' '}

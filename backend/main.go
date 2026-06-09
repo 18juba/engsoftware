@@ -35,7 +35,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = dbConnection.AutoMigrate(&model.User{}, &model.Task{}, &model.Notification{})
+	err = dbConnection.AutoMigrate(
+		&model.User{},
+		&model.UserTeacher{},
+		&model.UserStudent{},
+		&model.Subject{},
+		&model.Class{},
+		&model.Enrollment{},
+		&model.Task{},
+		&model.TaskSubmit{},
+		&model.Notification{},
+	)
 
 	if err != nil {
 		log.Fatal("Erro ao migrar banco de dados:", err)

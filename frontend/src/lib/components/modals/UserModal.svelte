@@ -34,7 +34,7 @@
 							: 'cursor-pointer hover:bg-gray-100/10'}"
 						onclick={() => selectCharacter(character)}
 					>
-						<Icon icon={`/characters/${character}.png`} class="h-6 w-6 sm:h-8 sm:w-8" />
+						<Icon icon={`characters/${character}.png`} class="h-6 w-6 sm:h-8 sm:w-8" />
 					</button>
 				{/each}
 			</div>
