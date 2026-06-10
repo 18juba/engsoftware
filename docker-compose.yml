@@ -16,9 +16,9 @@ services:
       - pg_network
     restart: unless-stopped
 
-  backend:
+  auth-service:
     build:
-      context: ./backend
+      context: ./auth-service
       dockerfile: Dockerfile
     environment:
       APP_URL: ${APP_URL:-http://localhost:8000}
@@ -31,7 +31,7 @@ services:
       DB_NAME: ${POSTGRES_DB}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:5173}
     ports:
-      - "${BACKEND_PORT:-8000}:8000"
+      - "${AUTH_SERVICE_PORT:-8000}:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -45,7 +45,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     depends_on:
-      - backend
+      - auth-service
     environment:
       PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:8000}
       HOST: 0.0.0.0

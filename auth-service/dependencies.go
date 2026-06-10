@@ -15,8 +15,6 @@ import (
 type Dependencies struct {
 	HealthcheckController controller.HealthcheckController
 	AuthController        controller.AuthController
-	UserController        controller.UserController
-	TaskController        controller.TaskController
 }
 
 func setupDependencies(dbConnection *gorm.DB) *Dependencies {
@@ -26,19 +24,9 @@ func setupDependencies(dbConnection *gorm.DB) *Dependencies {
 	auth_service := service.NewAuthService(auth_repository, getJWTSecret(), getTokenTTL())
 	auth_controller := controller.NewAuthController(auth_service)
 
-	user_repository := repository.NewUserRepository(dbConnection)
-	user_service := service.NewUserService(user_repository)
-	user_controller := controller.NewUserController(user_service)
-
-	task_repository := repository.NewTaskRepository(dbConnection)
-	task_service := service.NewTaskService(task_repository)
-	task_controller := controller.NewTaskController(task_service, user_service)
-
 	return &Dependencies{
 		HealthcheckController: healthcheck_controller,
 		AuthController:        auth_controller,
-		UserController:        user_controller,
-		TaskController:        task_controller,
 	}
 }
 

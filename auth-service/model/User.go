@@ -35,14 +35,13 @@ const (
 )
 
 type User struct {
-	ID            int            `json:"id" gorm:"primaryKey"`
-	Type          UserType       `json:"type" gorm:"type:varchar(20);check:type IN ('teacher','student','admin');default:'student'"`
-	Character     UserCharacter  `json:"character" gorm:"type:varchar(20);check:character IN ('anonymous', 'bender', 'creeper', 'doge', 'flameprincess', 'freddy', 'hellokitty', 'homersimpson', 'ironman', 'jake', 'jason', 'joker', 'luigi', 'mario', 'melody', 'minecraft', 'monalisa', 'princessbubblegum', 'scream', 'troll');default:'homersimpson'"`
-	Name          string         `json:"name" gorm:"not null"`
-	Email         string         `json:"email" gorm:"uniqueIndex"`
-	Password      string         `json:"-" gorm:"not null"`
-	Whatsapp      *string        `json:"whatsapp"`
-	Active        bool           `json:"active" gorm:"default:true"`
-	CreatedAt     time.Time      `json:"created_at" gorm:"autoCreateTime"`
-	Notifications []Notification `gorm:"foreignKey:UserID" json:"notifications,omitempty"`
+	ID        int           `json:"id" gorm:"primaryKey"`
+	Type      UserType      `json:"type" gorm:"type:varchar(20);check:type IN ('teacher','student','admin');default:'student'"`
+	Character UserCharacter `json:"character" gorm:"type:varchar(20);check:character IN ('anonymous', 'bender', 'creeper', 'doge', 'flameprincess', 'freddy', 'hellokitty', 'homersimpson', 'ironman', 'jake', 'jason', 'joker', 'luigi', 'mario', 'melody', 'minecraft', 'monalisa', 'princessbubblegum', 'scream', 'troll');default:'homersimpson'"`
+	Name      string        `json:"name" gorm:"not null"`
+	Email     string        `json:"email" gorm:"uniqueIndex"`
+	Password  string        `json:"-" gorm:"not null"`
+	Whatsapp  *string       `json:"whatsapp"`
+	Active    bool          `json:"active" gorm:"default:true"`
+	CreatedAt time.Time     `json:"created_at" gorm:"autoCreateTime"`
 }
