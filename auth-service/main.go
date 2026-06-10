@@ -39,12 +39,6 @@ func main() {
 		&model.User{},
 		&model.UserTeacher{},
 		&model.UserStudent{},
-		&model.Subject{},
-		&model.Class{},
-		&model.Enrollment{},
-		&model.Task{},
-		&model.TaskSubmit{},
-		&model.Notification{},
 	)
 
 	if err != nil {

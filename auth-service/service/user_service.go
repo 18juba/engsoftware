@@ -52,7 +52,3 @@ func (service *UserService) Store(user model.User) (model.User, error) {
 func (service *UserService) ChangeCharacter(id int, character model.UserCharacter) error {
 	return service.repository.ChangeCharacter(id, character)
 }
-
-func (service *UserService) Dashboard(userID int) (repository.UserDashboardResponse, error) {
-	return service.repository.Dashboard(userID)
-}

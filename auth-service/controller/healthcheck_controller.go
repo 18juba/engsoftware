@@ -32,7 +32,7 @@ func (controller *HealthcheckController) Check(context *gin.Context) {
 
 	context.JSON(httpStatus, gin.H{
 		"status":    map[bool]string{true: "ok", false: "not_ok"}[httpStatus == http.StatusOK],
-		"service":   "backend",
+		"service":   "auth-service",
 		"timestamp": time.Now().Format(time.RFC3339),
 		"uptime":    time.Since(controller.StartTime).String(),
 		"checks": gin.H{
