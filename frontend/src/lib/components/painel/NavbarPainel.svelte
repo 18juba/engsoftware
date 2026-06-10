@@ -14,6 +14,7 @@
 	const userStore = auth.user;
 
 	let user = $derived($userStore);
+	let userType = $derived(user?.type);
 
 	let isSidebarOpen = $state(true);
 	let isUserDropdownOpen = $state(false);
@@ -116,25 +117,27 @@
 		<nav class="px-2 py-6">
 			<ul class="font2 flex flex-col gap-6">
 				{#each LINKS as item (item.id)}
-					<a href={item.href}>
-						<li
-							class={`flex items-center justify-start gap-1 pl-1 font-bold transition-all duration-200
+					{#if item.userTypes.includes(userType)}
+						<a href={item.href}>
+							<li
+								class={`flex items-center justify-start gap-1 pl-1 font-bold transition-all duration-200
 								${
 									isActive(item.href)
 										? 'border-l-2 border-l-(--text) bg-linear-to-r from-(--text)/20 to-transparent'
 										: 'border-l-0 border-transparent bg-transparent hover:bg-(--text)/10'
 								}`}
-						>
-							<Icon icon={item.icon} class="h-10 w-10 shrink-0" />
-
-							<span
-								class={`ml-2 overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out
-									${isSidebarOpen ? 'max-w-xs translate-x-0 opacity-100' : 'max-w-0 -translate-x-2 opacity-0'}`}
 							>
-								{item.label}
-							</span>
-						</li>
-					</a>
+								<Icon icon={item.icon} class="h-10 w-10 shrink-0" />
+
+								<span
+									class={`ml-2 overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out
+									${isSidebarOpen ? 'max-w-xs translate-x-0 opacity-100' : 'max-w-0 -translate-x-2 opacity-0'}`}
+								>
+									{item.label}
+								</span>
+							</li>
+						</a>
+					{/if}
 				{/each}
 			</ul>
 		</nav>
@@ -144,7 +147,7 @@
 		{@render children()}
 	</main>
 
-	<BottombarPainel />
+	<BottombarPainel {userType} />
 </div>
 
 <UserModal

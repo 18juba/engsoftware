@@ -3,6 +3,8 @@
 	import Icon from '../ui/Icon.svelte';
 	import { LINKS } from './Links';
 
+	let { userType } = $props();
+
 	function isActive(href: string): boolean {
 		const currentPath = page.url.pathname;
 
@@ -31,10 +33,11 @@
 >
 	<ul class="flex items-center justify-evenly py-2">
 		{#each LINKS as item (item.id)}
-			<li>
-				<a
-					href={item.href}
-					class="
+			{#if item.userTypes.includes(userType)}
+				<li>
+					<a
+						href={item.href}
+						class="
 						flex flex-col items-center gap-1
 						rounded-b
 						px-1
@@ -43,11 +46,12 @@
                         transition-all
 						{isActive(item.href) ? 'border-b-2 opacity-100' : 'opacity-70'}
 					"
-				>
-					<Icon icon={item.icon} class="h-6 w-6" />
-					<span class="text-xs">{item.label}</span>
-				</a>
-			</li>
+					>
+						<Icon icon={item.icon} class="h-6 w-6" />
+						<span class="text-xs">{item.label}</span>
+					</a>
+				</li>
+			{/if}
 		{/each}
 	</ul>
 </nav>
