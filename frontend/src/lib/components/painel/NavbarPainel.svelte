@@ -76,8 +76,8 @@
 	<div class="flex w-full items-center justify-between px-2 sm:px-4">
 		<address class="hidden items-center justify-center gap-2 not-italic sm:flex">
 			<div class="flex flex-col">
-				<h2 class="text-lg font-bold">Marca</h2>
-				<p class="text-sm">Descrição da marca</p>
+				<h2 class="text-lg font-bold">Engenharia de Software</h2>
+				<p class="text-sm">Gerenciamento Acadêmico</p>
 			</div>
 		</address>
 
@@ -120,11 +120,11 @@
 					{#if item.userTypes.includes(userType)}
 						<a href={item.href}>
 							<li
-								class={`flex items-center justify-start gap-1 pl-1 font-bold transition-all duration-200
+								class={`flex items-center justify-start gap-1 pl-1 py-0.5 font-bold transition-all duration-100
 								${
 									isActive(item.href)
-										? 'border-l-2 border-l-(--text) bg-linear-to-r from-(--text)/20 to-transparent'
-										: 'border-l-0 border-transparent bg-transparent hover:bg-(--text)/10'
+										? 'border-l border-l-(--foreground) bg-linear-to-r from-(--foreground)/20 to-transparent'
+										: 'border-l-0 border-transparent bg-transparent hover:bg-(--foreground)/10'
 								}`}
 							>
 								<Icon icon={item.icon} class="h-10 w-10 shrink-0" />
