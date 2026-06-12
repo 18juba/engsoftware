@@ -44,7 +44,8 @@
                         pb-0.5
                         text-xs
                         transition-all
-						{isActive(item.href) ? 'border-b-2 opacity-100' : 'opacity-70'}
+						duration-100
+						{isActive(item.href) ? 'border-b border-b-(--foreground) opacity-100 bg-linear-to-t from-(--foreground)/10 to-transparent' : 'border-b-0 border-b-transparent bg-transparent hover:bg-(--foreground)/10 opacity-70'}
 					"
 					>
 						<Icon icon={item.icon} class="h-6 w-6" />
