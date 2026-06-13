@@ -1,8 +1,7 @@
 {
   "openapi": "3.0.4",
   "info": {
-    "title": "Escola API",
-    "description": "API REST para sistema escolar com alunos, professores, disciplinas, turmas e atividades.",
+    "title": "Escola API - Backend de Negócios",
     "version": "v1"
   },
   "paths": {
@@ -1149,17 +1148,15 @@
     },
     "securitySchemes": {
       "Bearer": {
-        "type": "http",
-        "description": "Insira seu token JWT diretamente no campo abaixo.",
-        "scheme": "Bearer",
-        "bearerFormat": "JWT"
+        "type": "apiKey",
+        "description": "Insira o token JWT desta forma: Bearer {seu_token_aqui}",
+        "name": "Authorization",
+        "in": "header"
       }
     }
   },
   "security": [
-    {
-      "Bearer": [ ]
-    }
+    { }
   ],
   "tags": [
     {

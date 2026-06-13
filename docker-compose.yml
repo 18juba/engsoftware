@@ -2,6 +2,8 @@ services:
   postgres:
     image: postgres:17-alpine
     container_name: engsoftware-postgres-1
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -25,10 +27,8 @@ services:
       APP_URL: ${APP_URL:-http://localhost:8000}
       JWT_SECRET: ${JWT_SECRET}
       JWT_TTL_MINUTES: ${JWT_TTL_MINUTES:-60}
-      # ── ATUALIZADO AQUI ──
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
-      # ─────────────────────
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_NAME: ${POSTGRES_DB}
@@ -50,7 +50,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080
-      # Monta a string dinamicamente usando as variáveis do seu arquivo .env
       - CONNECTION_STRING=Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
       - Jwt__Key=${JWT_SECRET}
       - Jwt__Issuer=${JWT_ISSUER:-EscolaApi}
