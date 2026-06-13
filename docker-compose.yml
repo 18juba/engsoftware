@@ -40,12 +40,38 @@ services:
       - app_network
     restart: unless-stopped
 
+  # ==========================================
+  # ADICIONE O SEU BACKEND AQUI:
+  # ==========================================
+  backend-aspnet:
+    build:
+      context: ./Backend/Backend # Altere para o caminho da pasta do seu back
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      # Monta a string dinamicamente usando as variáveis do seu arquivo .env
+      - CONNECTION_STRING=Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+      - Jwt__Key=${JWT_SECRET}
+      - Jwt__Issuer=${JWT_ISSUER:-EscolaApi}
+      - Jwt__Audience=${JWT_AUDIENCE:-EscolaClientes}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - pg_network
+      - app_network
+    restart: unless-stopped
+
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     depends_on:
       - auth-service
+      - backend-aspnet
     environment:
       PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:8000}
       HOST: 0.0.0.0
@@ -64,3 +90,4 @@ networks:
 
 volumes:
   postgres_data:
+    driver: local
