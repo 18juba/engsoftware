@@ -1,0 +1,31 @@
+# Estágio 1: Builder (Usa o SDK completo do .NET no Alpine para compilar)
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS builder
+WORKDIR /app
+
+# Copia os arquivos de projeto primeiro para aproveitar o cache das camadas do Docker (Restore)
+COPY *.csproj ./
+RUN dotnet restore
+
+# Copia o restante dos arquivos do código-fonte e publica a aplicação otimizada
+COPY . .
+RUN dotnet publish -c Release -o /usr/local/bin/publish --no-restore
+
+# Estágio 2: Runtime (Usa apenas o ambiente de execução do ASP.NET no Alpine, muito mais leve)
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+WORKDIR /app
+
+# Garante os pacotes de certificados e fuso horário (exatamente como no exemplo em Go)
+RUN apk add --no-cache ca-certificates tzdata
+
+# Copia os arquivos compilados do estágio anterior
+COPY --from=builder /usr/local/bin/publish .
+
+# Cria o arquivo .env em branco e expõe a porta exigida pelo seu projeto
+RUN touch .env
+EXPOSE 5173
+
+# Configura o ASP.NET Core para escutar especificamente na porta 5173
+ENV ASPNETCORE_URLS=http://+:5173
+
+# Executa a DLL principal do seu projeto (Substitua 'Backend.dll' pelo nome real do seu .csproj se for diferente)
+ENTRYPOINT ["dotnet", "Backend.dll"]
