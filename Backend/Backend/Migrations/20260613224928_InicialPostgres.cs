@@ -1,12 +1,13 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class CriarEstruturaInicial : Migration
+    public partial class InicialPostgres : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,11 +16,11 @@ namespace Backend.Migrations
                 name: "Disciplinas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Nome = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Codigo = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    CargaHoraria = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nome = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Codigo = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    CargaHoraria = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,12 +31,12 @@ namespace Backend.Migrations
                 name: "Usuarios",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Nome = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
-                    Email = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Senha = table.Column<string>(type: "TEXT", nullable: false),
-                    Tipo = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nome = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    Email = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Senha = table.Column<string>(type: "text", nullable: false),
+                    Tipo = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,11 +47,11 @@ namespace Backend.Migrations
                 name: "Turmas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Semestre = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
-                    Horario = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    DisciplinaId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Semestre = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    Horario = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    DisciplinaId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,11 +68,11 @@ namespace Backend.Migrations
                 name: "Alunos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Matricula = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    Curso = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
-                    UsuarioId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Matricula = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Curso = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    UsuarioId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,11 +89,11 @@ namespace Backend.Migrations
                 name: "Professores",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Siape = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    Departamento = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
-                    UsuarioId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Siape = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Departamento = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    UsuarioId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -109,12 +110,12 @@ namespace Backend.Migrations
                 name: "Atividades",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Titulo = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Descricao = table.Column<string>(type: "TEXT", nullable: false),
-                    Prazo = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    TurmaId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Titulo = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Descricao = table.Column<string>(type: "text", nullable: false),
+                    Prazo = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TurmaId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -131,12 +132,12 @@ namespace Backend.Migrations
                 name: "Matriculas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Data = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Status = table.Column<string>(type: "TEXT", nullable: false),
-                    AlunoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    TurmaId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Data = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    AlunoId = table.Column<int>(type: "integer", nullable: false),
+                    TurmaId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -159,8 +160,8 @@ namespace Backend.Migrations
                 name: "ProfessorDisciplinas",
                 columns: table => new
                 {
-                    ProfessorId = table.Column<int>(type: "INTEGER", nullable: false),
-                    DisciplinaId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ProfessorId = table.Column<int>(type: "integer", nullable: false),
+                    DisciplinaId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -183,12 +184,12 @@ namespace Backend.Migrations
                 name: "Entregas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    DataEntrega = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Nota = table.Column<decimal>(type: "TEXT", precision: 5, scale: 2, nullable: true),
-                    AlunoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    AtividadeId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DataEntrega = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Nota = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: true),
+                    AlunoId = table.Column<int>(type: "integer", nullable: false),
+                    AtividadeId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

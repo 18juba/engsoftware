@@ -37,30 +37,33 @@ public class AlunoService : IAlunoService
 
     public async Task<AlunoDto> CriarAsync(AlunoCreateDto dto)
     {
-        // 1. Instancia o usuário normalmente
-        var usuario = new Usuario
+        try
         {
-            Nome = dto.Nome,
-            Email = dto.Email,
-            Senha = BCrypt.Net.BCrypt.HashPassword(dto.Senha),
-            Tipo = TipoUsuario.Aluno
-        };
+            var usuario = new Usuario
+            {
+                Nome = dto.Nome,
+                Email = dto.Email,
+                Senha = BCrypt.Net.BCrypt.HashPassword(dto.Senha),
+                Tipo = TipoUsuario.Aluno
+            };
 
-        // 2. Cria o aluno passando o OBJETO usuario inteiro, não o ID solto
-        var aluno = new Aluno
+            var aluno = new Aluno
+            {
+                Matricula = dto.Matricula,
+                Curso = dto.Curso,
+                Usuario = usuario
+            };
+
+            _context.Alunos.Add(aluno);
+            await _context.SaveChangesAsync();
+
+            return ToDto(aluno, usuario);
+        }
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
         {
-            Matricula = dto.Matricula,
-            Curso = dto.Curso,
-            Usuario = usuario // O EF entende o relacionamento e cria a chave sozinho
-        };
-
-        // 3. Adiciona apenas o aluno ao contexto (ele já arrasta o usuário junto)
-        _context.Alunos.Add(aluno);
-
-        // 4. Salva UMA única vez.
-        await _context.SaveChangesAsync();
-
-        return ToDto(aluno, usuario);
+            var erroReal = ex.InnerException?.Message ?? ex.Message;
+            throw new Exception($"[ERRO BANCO POSTGRES]: {erroReal}", ex);
+        }
     }
     public async Task<bool> DeletarAsync(int id)
     {
