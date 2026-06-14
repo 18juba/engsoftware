@@ -21,7 +21,13 @@ func setupDependencies(dbConnection *gorm.DB) *Dependencies {
 	healthcheck_controller := controller.NewHealthcheckController(dbConnection)
 
 	auth_repository := repository.NewAuthRepository(dbConnection)
-	auth_service := service.NewAuthService(auth_repository, getJWTSecret(), getTokenTTL())
+	auth_service := service.NewAuthService(
+		auth_repository,
+		getJWTSecret(),
+		getTokenTTL(),
+		getJWTIssuer(),   // ← novo
+		getJWTAudience(), // ← novo
+	)
 	auth_controller := controller.NewAuthController(auth_service)
 
 	return &Dependencies{
@@ -32,6 +38,14 @@ func setupDependencies(dbConnection *gorm.DB) *Dependencies {
 
 func getJWTSecret() string {
 	return os.Getenv("JWT_SECRET")
+}
+
+func getJWTIssuer() string {
+	return os.Getenv("JWT_ISSUER")
+}
+
+func getJWTAudience() string {
+	return os.Getenv("JWT_AUDIENCE")
 }
 
 func getTokenTTL() time.Duration {
