@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Scalar.AspNetCore;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,7 +51,7 @@ builder.Services.AddAuthentication(options =>
         OnMessageReceived = context =>
         {
             var auth = context.Request.Headers["Authorization"].ToString();
-            Console.WriteLine($"📨 Header Authorization recebido: '{auth}'");
+            Console.WriteLine($"📨 Header recebido: '{auth}'");
             return Task.CompletedTask;
         },
         OnAuthenticationFailed = context =>
@@ -85,8 +86,8 @@ builder.Services.AddSwaggerGen(c =>
         Description = "Insira apenas o token JWT (sem o prefixo Bearer)",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,  // ← corrigido
-        Scheme = "bearer",               // ← minúsculo
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
         BearerFormat = "JWT"
     });
 
@@ -108,15 +109,19 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-// 6. SWAGGER (sempre visível)
+// 6. SWAGGER JSON (necessário para o Scalar ler)
 app.UseSwagger();
-app.UseSwaggerUI(c =>
+
+// 7. SCALAR no lugar do Swagger UI
+app.MapScalarApiReference(options =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Escola API v1");
-    c.RoutePrefix = "swagger";
+    options.Title = "Escola API";
+    options.Theme = ScalarTheme.Purple;
+    options.DefaultHttpClient = new(ScalarTarget.Http, ScalarClient.Http11);
+    options.OpenApiRoutePattern = "/swagger/v1/swagger.json";
 });
 
-// 7. PIPELINE (ordem obrigatória)
+// 8. PIPELINE
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
