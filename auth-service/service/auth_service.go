@@ -19,16 +19,20 @@ var (
 )
 
 type AuthService struct {
-	repository repository.AuthRepository
-	jwtSecret  []byte
-	tokenTTL   time.Duration
+	repository  repository.AuthRepository
+	jwtSecret   []byte
+	tokenTTL    time.Duration
+	jwtIssuer   string
+	jwtAudience string
 }
 
-func NewAuthService(repo repository.AuthRepository, jwtSecret string, tokenTTL time.Duration) AuthService {
+func NewAuthService(repo repository.AuthRepository, jwtSecret string, tokenTTL time.Duration, jwtIssuer string, jwtAudience string) AuthService {
 	return AuthService{
-		repository: repo,
-		jwtSecret:  []byte(jwtSecret),
-		tokenTTL:   tokenTTL,
+		repository:  repo,
+		jwtSecret:   []byte(jwtSecret),
+		tokenTTL:    tokenTTL,
+		jwtIssuer:   jwtIssuer,
+		jwtAudience: jwtAudience,
 	}
 }
 
@@ -91,7 +95,8 @@ func (service *AuthService) Login(email string, password string) (string, time.T
 		ExpiresAt: jwt.NewNumericDate(expiresAt),
 		IssuedAt:  jwt.NewNumericDate(now),
 		NotBefore: jwt.NewNumericDate(now),
-		Issuer:    "camarao-api",
+		Issuer:    service.jwtIssuer,
+		Audience:  jwt.ClaimStrings{service.jwtAudience},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

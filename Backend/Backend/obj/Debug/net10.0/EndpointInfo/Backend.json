@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.4",
   "info": {
-    "title": "Escola API - Backend de Negócios",
+    "title": "Escola API",
     "version": "v1"
   },
   "paths": {
@@ -1148,10 +1148,10 @@
     },
     "securitySchemes": {
       "Bearer": {
-        "type": "apiKey",
-        "description": "Insira o token JWT desta forma: Bearer {seu_token_aqui}",
-        "name": "Authorization",
-        "in": "header"
+        "type": "http",
+        "description": "Insira apenas o token JWT (sem o prefixo Bearer)",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   },
