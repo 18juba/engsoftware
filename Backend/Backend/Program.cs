@@ -10,7 +10,8 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. CONEXÃO COM O BANCO DE DADOS
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
