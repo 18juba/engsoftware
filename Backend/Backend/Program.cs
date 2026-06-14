@@ -51,8 +51,9 @@ builder.Services.AddAuthentication(options =>
     {
         OnMessageReceived = context =>
         {
-            var auth = context.Request.Headers["Authorization"].ToString();
-            Console.WriteLine($"📨 Header recebido: '{auth}'");
+            //var auth = context.Request.Headers["Authorization"].ToString();
+            //Console.WriteLine($"📨 Header recebido: '{auth}'");
+            Console.WriteLine($"📨 Header recebido: foi recebido");
             return Task.CompletedTask;
         },
         OnAuthenticationFailed = context =>
