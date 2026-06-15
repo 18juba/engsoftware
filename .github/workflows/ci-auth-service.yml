@@ -1,0 +1,53 @@
+name: CI — Auth Service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "auth-service/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "auth-service/**"
+
+defaults:
+  run:
+    working-directory: auth-service
+
+jobs:
+  lint-and-test:
+    name: Lint, vet & test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: auth-service/go.mod
+          cache-dependency-path: auth-service/go.sum
+
+      - name: Check formatting (gofmt)
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "Os seguintes arquivos não estão formatados:"
+            echo "$unformatted"
+            echo "Rode 'gofmt -w .' localmente e faça commit."
+            exit 1
+          fi
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        run: go test -race -coverprofile=coverage.out ./...
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: auth-coverage
+          path: auth-service/coverage.out
+          retention-days: 7
