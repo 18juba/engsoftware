@@ -24,15 +24,17 @@ services:
       context: ./auth-service
       dockerfile: Dockerfile
     environment:
-      APP_URL: ${APP_URL:-http://localhost:8000}
+      APP_URL: ${APP_URL}
       JWT_SECRET: ${JWT_SECRET}
-      JWT_TTL_MINUTES: ${JWT_TTL_MINUTES:-60}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_AUDIENCE: ${JWT_AUDIENCE}
+      JWT_TTL_MINUTES: ${JWT_TTL_MINUTES}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_NAME: ${POSTGRES_DB}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:5173}
+      CORS_ORIGINS: ${CORS_ORIGINS}
     ports:
       - "${AUTH_SERVICE_PORT:-8000}:8000"
     depends_on:
@@ -52,8 +54,8 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - CONNECTION_STRING=Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
       - Jwt__Key=${JWT_SECRET}
-      - Jwt__Issuer=${JWT_ISSUER:-EscolaApi}
-      - Jwt__Audience=${JWT_AUDIENCE:-EscolaClientes}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
     ports:
       - "8080:8080"
     depends_on:
@@ -72,7 +74,7 @@ services:
       - auth-service
       - backend-aspnet
     environment:
-      PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:8000}
+      PUBLIC_API_URL: ${PUBLIC_API_URL}
       HOST: 0.0.0.0
       PORT: 3000
     ports:

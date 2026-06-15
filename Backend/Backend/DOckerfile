@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS builder
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS builder
 WORKDIR /app
 
 # Copia e restaura as dependências
