@@ -50,10 +50,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080
-      - CONNECTION_STRING=Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
+      - TURSO_DATABASE_URL=${ESCOLA_DB_URL}
+      - TURSO_AUTH_TOKEN=${ESCOLA_DB_TOKEN}
       - Jwt__Key=${JWT_SECRET}
-      - Jwt__Issuer=${JWT_ISSUER:-EscolaApi}
-      - Jwt__Audience=${JWT_AUDIENCE:-EscolaClientes}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
     ports:
       - "8080:8080"
     depends_on:

@@ -1,11 +1,11 @@
+using EscolaApi.Data;
+using EscolaApi.DTOs;
+using Libsql.Client;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using EscolaApi.Data;
-using EscolaApi.DTOs;
-using EscolaApi.Models;
-using LibSql.Client;
-using Microsoft.IdentityModel.Tokens;
+using System.Threading.Tasks;
 
 namespace EscolaApi.Services;
 
@@ -16,7 +16,7 @@ public interface IAuthService
 
 public class AuthService : IAuthService
 {
-    private readonly ILibSqlClient _db;
+    private readonly IDatabaseClient _db;
     private readonly IConfiguration _config;
 
     public AuthService(TursoClient turso, IConfiguration config)
@@ -31,27 +31,29 @@ public class AuthService : IAuthService
             "SELECT Id, Nome, Email, Senha, Tipo FROM Usuarios WHERE Email = ?",
             new object[] { request.Email });
 
-        string? id = null, nome = null, email = null, senha = null, tipo = null;
-        await foreach (var row in rs.Rows)
+        foreach (var row in rs.Rows)
         {
-            id    = row[0].ToString();
-            nome  = (string)row[1];
-            email = (string)row[2];
-            senha = (string)row[3];
-            tipo  = (string)row[4];
+            var r = row.ToArray();
+
+            var id = r[0] is Integer idVal ? idVal.Value.ToString() : null;
+            var nome = r[1] is Text nomeVal ? nomeVal.Value : null;
+            var email = r[2] is Text emailVal ? emailVal.Value : null;
+            var senha = r[3] is Text senhaVal ? senhaVal.Value : null;
+            var tipo = r[4] is Text tipoVal ? tipoVal.Value : null;
+
+            if (senha is null || !BCrypt.Net.BCrypt.Verify(request.Senha, senha))
+                return null;
+
+            var token = GerarToken(id!, nome!, email!, tipo!);
+            return new LoginResponse(token, nome!, tipo!);
         }
 
-        if (senha is null || !BCrypt.Net.BCrypt.Verify(request.Senha, senha))
-            return null;
-
-        var token = GerarToken(id!, nome!, email!, tipo!);
-        return new LoginResponse(token, nome!, tipo!);
+        return null; // Usuário não encontrado
     }
 
     private string GerarToken(string id, string nome, string email, string tipo)
     {
-        var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]

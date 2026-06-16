@@ -8,6 +8,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ==================== CONFIGURAÇÕES ====================
+
 // 1. CORS
 builder.Services.AddCors(options =>
 {
@@ -19,10 +21,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 2. TURSO CLIENT
+// 2. Turso Client
 builder.Services.AddSingleton<TursoClient>();
 
-// 3. JWT
+// 3. JWT Authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -35,42 +37,49 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+
         ValidateIssuer = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
+
         ValidateAudience = true,
         ValidAudience = builder.Configuration["Jwt:Audience"],
+
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
 });
 
-// 4. SERVIÇOS
+// 4. Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAlunoService, AlunoService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IProfessorService, ProfessorService>();
 builder.Services.AddScoped<IDisciplinaService, DisciplinaService>();
 builder.Services.AddScoped<ITurmaService, TurmaService>();
-builder.Services.AddScoped<IMatriculaService, MatriculaService>();
-builder.Services.AddScoped<IAtividadeService, AtividadeService>();
-builder.Services.AddScoped<IEntregaService, EntregaService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// 5. SWAGGER
+// 5. Swagger + Scalar
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Escola API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Escola API",
+        Version = "v1",
+        Description = "API do sistema de gestão escolar"
+    });
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Insira apenas o token JWT",
+        Description = "Insira o token JWT no formato: Bearer {seu token}",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT"
     });
+
     c.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
     {
         { new OpenApiSecuritySchemeReference("Bearer", null), new List<string>() }
@@ -79,18 +88,31 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.MapScalarApiReference(options =>
-{
-    options.Title = "Escola API";
-    options.Theme = ScalarTheme.Purple;
-    options.OpenApiRoutePattern = "/swagger/v1/swagger.json";
-});
+// ==================== MIDDLEWARES ====================
 
-app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.MapScalarApiReference(options =>
+    {
+        options.Title = "Escola API - Documentação";
+        options.Theme = ScalarTheme.Purple;
+        options.OpenApiRoutePattern = "/swagger/v1/swagger.json";
+    });
+}
+
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "healthy",
+    timestamp = DateTime.UtcNow,
+    environment = app.Environment.EnvironmentName
+}));
 
 app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();

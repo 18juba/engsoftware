@@ -34,7 +34,6 @@ public class UsuariosController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Deletar(int id)
         => await _service.DeletarAsync(id) ? NoContent() : NotFound();
 }
@@ -171,122 +170,6 @@ public class TurmasController : ControllerBase
         var result = await _service.CriarAsync(dto);
         return CreatedAtAction(nameof(ObterPorId), new { id = result.Id }, result);
     }
-
-    [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Deletar(int id)
-        => await _service.DeletarAsync(id) ? NoContent() : NotFound();
-}
-
-// ── Matriculas ───────────────────────────────────────────────
-[ApiController]
-[Route("api/[controller]")]
-[Authorize]
-public class MatriculasController : ControllerBase
-{
-    private readonly IMatriculaService _service;
-    public MatriculasController(IMatriculaService service) => _service = service;
-
-    [HttpGet]
-    public async Task<IActionResult> Listar() => Ok(await _service.ListarAsync());
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> ObterPorId(int id)
-    {
-        var dto = await _service.ObterPorIdAsync(id);
-        return dto is null ? NotFound() : Ok(dto);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Criar([FromBody] MatriculaCreateDto dto)
-    {
-        var result = await _service.CriarAsync(dto);
-        return CreatedAtAction(nameof(ObterPorId), new { id = result.Id }, result);
-    }
-
-    [HttpPatch("{id}/status")]
-    [Authorize(Roles = "Admin,Professor")]
-    public async Task<IActionResult> AlterarStatus(int id, [FromBody] StatusMatricula status)
-        => await _service.AlterarStatusAsync(id, status) ? NoContent() : NotFound();
-
-    [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Deletar(int id)
-        => await _service.DeletarAsync(id) ? NoContent() : NotFound();
-}
-
-// ── Atividades ───────────────────────────────────────────────
-[ApiController]
-[Route("api/[controller]")]
-[Authorize]
-public class AtividadesController : ControllerBase
-{
-    private readonly IAtividadeService _service;
-    public AtividadesController(IAtividadeService service) => _service = service;
-
-    [HttpGet]
-    public async Task<IActionResult> Listar() => Ok(await _service.ListarAsync());
-
-    [HttpGet("turma/{turmaId}")]
-    public async Task<IActionResult> ListarPorTurma(int turmaId) =>
-        Ok(await _service.ListarPorTurmaAsync(turmaId));
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> ObterPorId(int id)
-    {
-        var dto = await _service.ObterPorIdAsync(id);
-        return dto is null ? NotFound() : Ok(dto);
-    }
-
-    [HttpPost]
-    [Authorize(Roles = "Professor,Admin")]
-    public async Task<IActionResult> Criar([FromBody] AtividadeCreateDto dto)
-    {
-        var result = await _service.CriarAsync(dto);
-        return CreatedAtAction(nameof(ObterPorId), new { id = result.Id }, result);
-    }
-
-    [HttpDelete("{id}")]
-    [Authorize(Roles = "Professor,Admin")]
-    public async Task<IActionResult> Deletar(int id)
-        => await _service.DeletarAsync(id) ? NoContent() : NotFound();
-}
-
-// ── Entregas ─────────────────────────────────────────────────
-[ApiController]
-[Route("api/[controller]")]
-[Authorize]
-public class EntregasController : ControllerBase
-{
-    private readonly IEntregaService _service;
-    public EntregasController(IEntregaService service) => _service = service;
-
-    [HttpGet]
-    public async Task<IActionResult> Listar() => Ok(await _service.ListarAsync());
-
-    [HttpGet("atividade/{atividadeId}")]
-    public async Task<IActionResult> ListarPorAtividade(int atividadeId) =>
-        Ok(await _service.ListarPorAtividadeAsync(atividadeId));
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> ObterPorId(int id)
-    {
-        var dto = await _service.ObterPorIdAsync(id);
-        return dto is null ? NotFound() : Ok(dto);
-    }
-
-    [HttpPost]
-    [Authorize(Roles = "Aluno")]
-    public async Task<IActionResult> Criar([FromBody] EntregaCreateDto dto)
-    {
-        var result = await _service.CriarAsync(dto);
-        return CreatedAtAction(nameof(ObterPorId), new { id = result.Id }, result);
-    }
-
-    [HttpPatch("{id}/nota")]
-    [Authorize(Roles = "Professor,Admin")]
-    public async Task<IActionResult> LancarNota(int id, [FromBody] EntregaNotaDto dto)
-        => await _service.LancarNotaAsync(id, dto.Nota) ? NoContent() : NotFound();
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]

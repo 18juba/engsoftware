@@ -2,6 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "Escola API",
+    "description": "API do sistema de gestão escolar",
     "version": "v1"
   },
   "paths": {
@@ -90,114 +91,6 @@
         }
       }
     },
-    "/api/Atividades": {
-      "get": {
-        "tags": [
-          "Atividades"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Atividades"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AtividadeCreateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AtividadeCreateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AtividadeCreateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Atividades/turma/{turmaId}": {
-      "get": {
-        "tags": [
-          "Atividades"
-        ],
-        "parameters": [
-          {
-            "name": "turmaId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Atividades/{id}": {
-      "get": {
-        "tags": [
-          "Atividades"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Atividades"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Auth/login": {
       "post": {
         "tags": [
@@ -222,6 +115,18 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "Backend"
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -307,283 +212,6 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Entregas": {
-      "get": {
-        "tags": [
-          "Entregas"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Entregas"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EntregaCreateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EntregaCreateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/EntregaCreateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Entregas/atividade/{atividadeId}": {
-      "get": {
-        "tags": [
-          "Entregas"
-        ],
-        "parameters": [
-          {
-            "name": "atividadeId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Entregas/{id}": {
-      "get": {
-        "tags": [
-          "Entregas"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Entregas"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Entregas/{id}/nota": {
-      "patch": {
-        "tags": [
-          "Entregas"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EntregaNotaDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EntregaNotaDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/EntregaNotaDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Matriculas": {
-      "get": {
-        "tags": [
-          "Matriculas"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Matriculas"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MatriculaCreateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MatriculaCreateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/MatriculaCreateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Matriculas/{id}": {
-      "get": {
-        "tags": [
-          "Matriculas"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Matriculas"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Matriculas/{id}/status": {
-      "patch": {
-        "tags": [
-          "Matriculas"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StatusMatricula"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StatusMatricula"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/StatusMatricula"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "OK"
@@ -946,28 +574,6 @@
         },
         "additionalProperties": false
       },
-      "AtividadeCreateDto": {
-        "type": "object",
-        "properties": {
-          "titulo": {
-            "type": "string",
-            "nullable": true
-          },
-          "descricao": {
-            "type": "string",
-            "nullable": true
-          },
-          "prazo": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "turmaId": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
       "DisciplinaCreateDto": {
         "type": "object",
         "properties": {
@@ -986,30 +592,6 @@
         },
         "additionalProperties": false
       },
-      "EntregaCreateDto": {
-        "type": "object",
-        "properties": {
-          "alunoId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "atividadeId": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "EntregaNotaDto": {
-        "type": "object",
-        "properties": {
-          "nota": {
-            "type": "number",
-            "format": "double"
-          }
-        },
-        "additionalProperties": false
-      },
       "LoginRequest": {
         "type": "object",
         "properties": {
@@ -1020,20 +602,6 @@
           "senha": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "MatriculaCreateDto": {
-        "type": "object",
-        "properties": {
-          "alunoId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "turmaId": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1063,16 +631,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "StatusMatricula": {
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ],
-        "type": "integer",
-        "format": "int32"
       },
       "TipoUsuario": {
         "enum": [
@@ -1149,7 +707,7 @@
     "securitySchemes": {
       "Bearer": {
         "type": "http",
-        "description": "Insira apenas o token JWT (sem o prefixo Bearer)",
+        "description": "Insira o token JWT no formato: Bearer {seu token}",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
@@ -1163,19 +721,13 @@
       "name": "Alunos"
     },
     {
-      "name": "Atividades"
-    },
-    {
       "name": "Auth"
     },
     {
+      "name": "Backend"
+    },
+    {
       "name": "Disciplinas"
-    },
-    {
-      "name": "Entregas"
-    },
-    {
-      "name": "Matriculas"
     },
     {
       "name": "Professores"
