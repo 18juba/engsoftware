@@ -9,13 +9,10 @@ import (
 
 func validateEnv() {
 	requiredVars := map[string]string{
-		"DB_HOST":      "Host do banco de dados",
-		"DB_PORT":      "Porta do banco de dados",
-		"DB_USER":      "Usuário do banco de dados",
-		"DB_PASSWORD":  "Senha do banco de dados",
-		"DB_NAME":      "Nome do banco de dados",
-		"JWT_SECRET":   "Secret para JWT",
-		"CORS_ORIGINS": "Origens CORS permitidas",
+		"DATABASE_URL":   "URL de conexão do banco de dados",
+		"DATABASE_TOKEN": "Token de autenticação do banco de dados (Turso)",
+		"JWT_SECRET":     "Secret para JWT",
+		"CORS_ORIGINS":   "Origens CORS permitidas",
 	}
 
 	for envVar, description := range requiredVars {

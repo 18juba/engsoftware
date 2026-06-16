@@ -23,25 +23,12 @@ func main() {
 
 	validateEnv()
 
-	dbConnection, err := db.ConnectDB(
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
-	)
-
+	dbConnection, err := db.ConnectDB(os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = dbConnection.AutoMigrate(
-		&model.User{},
-		&model.UserTeacher{},
-		&model.UserStudent{},
-	)
-
-	if err != nil {
+	if err := dbConnection.AutoMigrate(&model.User{}, &model.UserTeacher{}, &model.UserStudent{}); err != nil {
 		log.Fatal("Erro ao migrar banco de dados:", err)
 	}
 

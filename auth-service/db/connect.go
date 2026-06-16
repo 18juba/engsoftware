@@ -1,24 +1,35 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
-	"gorm.io/driver/postgres"
+	"github.com/glebarez/sqlite"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	"gorm.io/gorm"
 )
 
-func ConnectDB(host, port, user, password, dbname string) (*gorm.DB, error) {
-	connection_string := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname,
-	)
+func ConnectDB(databaseURL string) (*gorm.DB, error) {
+	dsn := databaseURL
+	token := os.Getenv("DATABASE_TOKEN")
+	if token != "" {
+		dsn = fmt.Sprintf("%s?authToken=%s", databaseURL, token)
+	}
 
-	db, err := gorm.Open(postgres.Open(connection_string), &gorm.Config{})
+	sqlDB, err := sql.Open("libsql", dsn)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Printf("Connected to %s", dbname)
+	db, err := gorm.Open(&sqlite.Dialector{
+		Conn: sqlDB,
+	}, &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	log.Printf("Connected to DB: %s", databaseURL)
 	return db, nil
 }
