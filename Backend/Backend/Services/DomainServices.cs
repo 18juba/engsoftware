@@ -1,7 +1,7 @@
 using EscolaApi.Data;
 using EscolaApi.DTOs;
 using EscolaApi.Models;
-using Microsoft.EntityFrameworkCore;
+using LibSql.Client;
 
 namespace EscolaApi.Services;
 
@@ -16,34 +16,41 @@ public interface IDisciplinaService
 
 public class DisciplinaService : IDisciplinaService
 {
-    private readonly AppDbContext _context;
-    public DisciplinaService(AppDbContext context) => _context = context;
-
-    private static DisciplinaDto ToDto(Disciplina d) => new(d.Id, d.Nome, d.Codigo, d.CargaHoraria);
+    private readonly ILibSqlClient _db;
+    public DisciplinaService(TursoClient turso) => _db = turso.Client;
 
     public async Task<IEnumerable<DisciplinaDto>> ListarAsync()
-        => await _context.Disciplinas.Select(d => new DisciplinaDto(d.Id, d.Nome, d.Codigo, d.CargaHoraria)).ToListAsync();
+    {
+        var rs = await _db.Execute("SELECT Id, Nome, Codigo, CargaHoraria FROM Disciplinas");
+        var list = new List<DisciplinaDto>();
+        await foreach (var row in rs.Rows)
+            list.Add(new DisciplinaDto((int)(long)row[0], (string)row[1], (string)row[2], (int)(long)row[3]));
+        return list;
+    }
 
     public async Task<DisciplinaDto?> ObterPorIdAsync(int id)
     {
-        var d = await _context.Disciplinas.FindAsync(id);
-        return d is null ? null : ToDto(d);
+        var rs = await _db.Execute("SELECT Id, Nome, Codigo, CargaHoraria FROM Disciplinas WHERE Id = ?", new object[] { id });
+        await foreach (var row in rs.Rows)
+            return new DisciplinaDto((int)(long)row[0], (string)row[1], (string)row[2], (int)(long)row[3]);
+        return null;
     }
 
     public async Task<DisciplinaDto> CriarAsync(DisciplinaCreateDto dto)
     {
-        var d = new Disciplina { Nome = dto.Nome, Codigo = dto.Codigo, CargaHoraria = dto.CargaHoraria };
-        _context.Disciplinas.Add(d);
-        await _context.SaveChangesAsync();
-        return ToDto(d);
+        await _db.Execute("INSERT INTO Disciplinas (Nome, Codigo, CargaHoraria) VALUES (?, ?, ?)",
+            new object[] { dto.Nome, dto.Codigo, dto.CargaHoraria });
+        var rs = await _db.Execute("SELECT last_insert_rowid()");
+        long id = 0; await foreach (var row in rs.Rows) id = (long)row[0];
+        return new DisciplinaDto((int)id, dto.Nome, dto.Codigo, dto.CargaHoraria);
     }
 
     public async Task<bool> DeletarAsync(int id)
     {
-        var d = await _context.Disciplinas.FindAsync(id);
-        if (d is null) return false;
-        _context.Disciplinas.Remove(d);
-        await _context.SaveChangesAsync();
+        var rs = await _db.Execute("SELECT Id FROM Disciplinas WHERE Id = ?", new object[] { id });
+        bool existe = false; await foreach (var _ in rs.Rows) existe = true;
+        if (!existe) return false;
+        await _db.Execute("DELETE FROM Disciplinas WHERE Id = ?", new object[] { id });
         return true;
     }
 }
@@ -59,40 +66,58 @@ public interface ITurmaService
 
 public class TurmaService : ITurmaService
 {
-    private readonly AppDbContext _context;
-    public TurmaService(AppDbContext context) => _context = context;
-
-    private static TurmaDto ToDto(Turma t) =>
-        new(t.Id, t.Semestre, t.Horario, new DisciplinaDto(t.Disciplina.Id, t.Disciplina.Nome, t.Disciplina.Codigo, t.Disciplina.CargaHoraria));
+    private readonly ILibSqlClient _db;
+    public TurmaService(TursoClient turso) => _db = turso.Client;
 
     public async Task<IEnumerable<TurmaDto>> ListarAsync()
-        => await _context.Turmas.Include(t => t.Disciplina)
-            .Select(t => new TurmaDto(t.Id, t.Semestre, t.Horario,
-                new DisciplinaDto(t.Disciplina.Id, t.Disciplina.Nome, t.Disciplina.Codigo, t.Disciplina.CargaHoraria)))
-            .ToListAsync();
+    {
+        var rs = await _db.Execute(
+            "SELECT t.Id, t.Semestre, t.Horario, d.Id, d.Nome, d.Codigo, d.CargaHoraria " +
+            "FROM Turmas t JOIN Disciplinas d ON t.DisciplinaId = d.Id");
+        var list = new List<TurmaDto>();
+        await foreach (var row in rs.Rows)
+            list.Add(new TurmaDto((int)(long)row[0], (string)row[1], (string)row[2],
+                new DisciplinaDto((int)(long)row[3], (string)row[4], (string)row[5], (int)(long)row[6])));
+        return list;
+    }
 
     public async Task<TurmaDto?> ObterPorIdAsync(int id)
     {
-        var t = await _context.Turmas.Include(x => x.Disciplina).FirstOrDefaultAsync(x => x.Id == id);
-        return t is null ? null : ToDto(t);
+        var rs = await _db.Execute(
+            "SELECT t.Id, t.Semestre, t.Horario, d.Id, d.Nome, d.Codigo, d.CargaHoraria " +
+            "FROM Turmas t JOIN Disciplinas d ON t.DisciplinaId = d.Id WHERE t.Id = ?",
+            new object[] { id });
+        await foreach (var row in rs.Rows)
+            return new TurmaDto((int)(long)row[0], (string)row[1], (string)row[2],
+                new DisciplinaDto((int)(long)row[3], (string)row[4], (string)row[5], (int)(long)row[6]));
+        return null;
     }
 
     public async Task<TurmaDto> CriarAsync(TurmaCreateDto dto)
     {
-        var t = new Turma { Semestre = dto.Semestre, Horario = dto.Horario, DisciplinaId = dto.DisciplinaId };
-        _context.Turmas.Add(t);
-        await _context.SaveChangesAsync();
-        await _context.Entry(t).Reference(x => x.Disciplina).LoadAsync();
-        return ToDto(t);
+        await _db.Execute("INSERT INTO Turmas (Semestre, Horario, DisciplinaId) VALUES (?, ?, ?)",
+            new object[] { dto.Semestre, dto.Horario, dto.DisciplinaId });
+        var rs = await _db.Execute("SELECT last_insert_rowid()");
+        long id = 0; await foreach (var row in rs.Rows) id = (long)row[0];
+        var d = await ObterDisciplina(dto.DisciplinaId);
+        return new TurmaDto((int)id, dto.Semestre, dto.Horario, d!);
     }
 
     public async Task<bool> DeletarAsync(int id)
     {
-        var t = await _context.Turmas.FindAsync(id);
-        if (t is null) return false;
-        _context.Turmas.Remove(t);
-        await _context.SaveChangesAsync();
+        var rs = await _db.Execute("SELECT Id FROM Turmas WHERE Id = ?", new object[] { id });
+        bool existe = false; await foreach (var _ in rs.Rows) existe = true;
+        if (!existe) return false;
+        await _db.Execute("DELETE FROM Turmas WHERE Id = ?", new object[] { id });
         return true;
+    }
+
+    private async Task<DisciplinaDto?> ObterDisciplina(int id)
+    {
+        var rs = await _db.Execute("SELECT Id, Nome, Codigo, CargaHoraria FROM Disciplinas WHERE Id = ?", new object[] { id });
+        await foreach (var row in rs.Rows)
+            return new DisciplinaDto((int)(long)row[0], (string)row[1], (string)row[2], (int)(long)row[3]);
+        return null;
     }
 }
 
@@ -108,53 +133,62 @@ public interface IMatriculaService
 
 public class MatriculaService : IMatriculaService
 {
-    private readonly AppDbContext _context;
-    public MatriculaService(AppDbContext context) => _context = context;
-
-    private static MatriculaDto ToDto(Matricula m) =>
-        new(m.Id, m.Data, m.Status.ToString(),
-            new AlunoDto(m.Aluno.Id, m.Aluno.Usuario.Nome, m.Aluno.Usuario.Email, m.Aluno.Matricula, m.Aluno.Curso),
-            m.TurmaId);
-
-    private IQueryable<Matricula> Query() =>
-        _context.Matriculas.Include(m => m.Aluno).ThenInclude(a => a.Usuario);
+    private readonly ILibSqlClient _db;
+    public MatriculaService(TursoClient turso) => _db = turso.Client;
 
     public async Task<IEnumerable<MatriculaDto>> ListarAsync()
-        => await Query().Select(m => new MatriculaDto(m.Id, m.Data, m.Status.ToString(),
-            new AlunoDto(m.Aluno.Id, m.Aluno.Usuario.Nome, m.Aluno.Usuario.Email, m.Aluno.Matricula, m.Aluno.Curso),
-            m.TurmaId)).ToListAsync();
+    {
+        var rs = await _db.Execute(
+            "SELECT m.Id, m.Data, m.Status, m.TurmaId, a.Id, u.Nome, u.Email, a.Matricula, a.Curso " +
+            "FROM Matriculas m JOIN Alunos a ON m.AlunoId = a.Id JOIN Usuarios u ON a.UsuarioId = u.Id");
+        var list = new List<MatriculaDto>();
+        await foreach (var row in rs.Rows)
+            list.Add(new MatriculaDto((int)(long)row[0], DateTime.Parse((string)row[1]), (string)row[2],
+                new AlunoDto((int)(long)row[4], (string)row[5], (string)row[6], (string)row[7], (string)row[8]),
+                (int)(long)row[3]));
+        return list;
+    }
 
     public async Task<MatriculaDto?> ObterPorIdAsync(int id)
     {
-        var m = await Query().FirstOrDefaultAsync(x => x.Id == id);
-        return m is null ? null : ToDto(m);
+        var rs = await _db.Execute(
+            "SELECT m.Id, m.Data, m.Status, m.TurmaId, a.Id, u.Nome, u.Email, a.Matricula, a.Curso " +
+            "FROM Matriculas m JOIN Alunos a ON m.AlunoId = a.Id JOIN Usuarios u ON a.UsuarioId = u.Id WHERE m.Id = ?",
+            new object[] { id });
+        await foreach (var row in rs.Rows)
+            return new MatriculaDto((int)(long)row[0], DateTime.Parse((string)row[1]), (string)row[2],
+                new AlunoDto((int)(long)row[4], (string)row[5], (string)row[6], (string)row[7], (string)row[8]),
+                (int)(long)row[3]);
+        return null;
     }
 
     public async Task<MatriculaDto> CriarAsync(MatriculaCreateDto dto)
     {
-        var m = new Matricula { AlunoId = dto.AlunoId, TurmaId = dto.TurmaId, Data = DateTime.UtcNow, Status = StatusMatricula.Ativa };
-        _context.Matriculas.Add(m);
-        await _context.SaveChangesAsync();
-        await _context.Entry(m).Reference(x => x.Aluno).LoadAsync();
-        await _context.Entry(m.Aluno).Reference(x => x.Usuario).LoadAsync();
-        return ToDto(m);
+        var data = DateTime.UtcNow.ToString("o");
+        await _db.Execute(
+            "INSERT INTO Matriculas (Data, Status, AlunoId, TurmaId) VALUES (?, 'Ativa', ?, ?)",
+            new object[] { data, dto.AlunoId, dto.TurmaId });
+        var rs = await _db.Execute("SELECT last_insert_rowid()");
+        long id = 0; await foreach (var row in rs.Rows) id = (long)row[0];
+        return (await ObterPorIdAsync((int)id))!;
     }
 
     public async Task<bool> AlterarStatusAsync(int id, StatusMatricula status)
     {
-        var m = await _context.Matriculas.FindAsync(id);
-        if (m is null) return false;
-        m.Status = status;
-        await _context.SaveChangesAsync();
+        var rs = await _db.Execute("SELECT Id FROM Matriculas WHERE Id = ?", new object[] { id });
+        bool existe = false; await foreach (var _ in rs.Rows) existe = true;
+        if (!existe) return false;
+        await _db.Execute("UPDATE Matriculas SET Status = ? WHERE Id = ?",
+            new object[] { status.ToString(), id });
         return true;
     }
 
     public async Task<bool> DeletarAsync(int id)
     {
-        var m = await _context.Matriculas.FindAsync(id);
-        if (m is null) return false;
-        _context.Matriculas.Remove(m);
-        await _context.SaveChangesAsync();
+        var rs = await _db.Execute("SELECT Id FROM Matriculas WHERE Id = ?", new object[] { id });
+        bool existe = false; await foreach (var _ in rs.Rows) existe = true;
+        if (!existe) return false;
+        await _db.Execute("DELETE FROM Matriculas WHERE Id = ?", new object[] { id });
         return true;
     }
 }
@@ -171,39 +205,58 @@ public interface IAtividadeService
 
 public class AtividadeService : IAtividadeService
 {
-    private readonly AppDbContext _context;
-    public AtividadeService(AppDbContext context) => _context = context;
-
-    private static AtividadeDto ToDto(Atividade a) =>
-        new(a.Id, a.Titulo, a.Descricao, a.Prazo, a.TurmaId);
+    private readonly ILibSqlClient _db;
+    public AtividadeService(TursoClient turso) => _db = turso.Client;
 
     public async Task<IEnumerable<AtividadeDto>> ListarAsync()
-        => await _context.Atividades.Select(a => new AtividadeDto(a.Id, a.Titulo, a.Descricao, a.Prazo, a.TurmaId)).ToListAsync();
+    {
+        var rs = await _db.Execute("SELECT Id, Titulo, Descricao, Prazo, TurmaId FROM Atividades");
+        var list = new List<AtividadeDto>();
+        await foreach (var row in rs.Rows)
+            list.Add(new AtividadeDto((int)(long)row[0], (string)row[1], (string)row[2],
+                DateTime.Parse((string)row[3]), (int)(long)row[4]));
+        return list;
+    }
 
     public async Task<IEnumerable<AtividadeDto>> ListarPorTurmaAsync(int turmaId)
-        => await _context.Atividades.Where(a => a.TurmaId == turmaId)
-            .Select(a => new AtividadeDto(a.Id, a.Titulo, a.Descricao, a.Prazo, a.TurmaId)).ToListAsync();
+    {
+        var rs = await _db.Execute(
+            "SELECT Id, Titulo, Descricao, Prazo, TurmaId FROM Atividades WHERE TurmaId = ?",
+            new object[] { turmaId });
+        var list = new List<AtividadeDto>();
+        await foreach (var row in rs.Rows)
+            list.Add(new AtividadeDto((int)(long)row[0], (string)row[1], (string)row[2],
+                DateTime.Parse((string)row[3]), (int)(long)row[4]));
+        return list;
+    }
 
     public async Task<AtividadeDto?> ObterPorIdAsync(int id)
     {
-        var a = await _context.Atividades.FindAsync(id);
-        return a is null ? null : ToDto(a);
+        var rs = await _db.Execute(
+            "SELECT Id, Titulo, Descricao, Prazo, TurmaId FROM Atividades WHERE Id = ?",
+            new object[] { id });
+        await foreach (var row in rs.Rows)
+            return new AtividadeDto((int)(long)row[0], (string)row[1], (string)row[2],
+                DateTime.Parse((string)row[3]), (int)(long)row[4]);
+        return null;
     }
 
     public async Task<AtividadeDto> CriarAsync(AtividadeCreateDto dto)
     {
-        var a = new Atividade { Titulo = dto.Titulo, Descricao = dto.Descricao, Prazo = dto.Prazo, TurmaId = dto.TurmaId };
-        _context.Atividades.Add(a);
-        await _context.SaveChangesAsync();
-        return ToDto(a);
+        await _db.Execute(
+            "INSERT INTO Atividades (Titulo, Descricao, Prazo, TurmaId) VALUES (?, ?, ?, ?)",
+            new object[] { dto.Titulo, dto.Descricao, dto.Prazo.ToString("o"), dto.TurmaId });
+        var rs = await _db.Execute("SELECT last_insert_rowid()");
+        long id = 0; await foreach (var row in rs.Rows) id = (long)row[0];
+        return new AtividadeDto((int)id, dto.Titulo, dto.Descricao, dto.Prazo, dto.TurmaId);
     }
 
     public async Task<bool> DeletarAsync(int id)
     {
-        var a = await _context.Atividades.FindAsync(id);
-        if (a is null) return false;
-        _context.Atividades.Remove(a);
-        await _context.SaveChangesAsync();
+        var rs = await _db.Execute("SELECT Id FROM Atividades WHERE Id = ?", new object[] { id });
+        bool existe = false; await foreach (var _ in rs.Rows) existe = true;
+        if (!existe) return false;
+        await _db.Execute("DELETE FROM Atividades WHERE Id = ?", new object[] { id });
         return true;
     }
 }
@@ -221,48 +274,68 @@ public interface IEntregaService
 
 public class EntregaService : IEntregaService
 {
-    private readonly AppDbContext _context;
-    public EntregaService(AppDbContext context) => _context = context;
-
-    private static EntregaDto ToDto(Entrega e) =>
-        new(e.Id, e.DataEntrega, e.Nota, e.AlunoId, e.AtividadeId);
+    private readonly ILibSqlClient _db;
+    public EntregaService(TursoClient turso) => _db = turso.Client;
 
     public async Task<IEnumerable<EntregaDto>> ListarAsync()
-        => await _context.Entregas.Select(e => new EntregaDto(e.Id, e.DataEntrega, e.Nota, e.AlunoId, e.AtividadeId)).ToListAsync();
+    {
+        var rs = await _db.Execute("SELECT Id, DataEntrega, Nota, AlunoId, AtividadeId FROM Entregas");
+        var list = new List<EntregaDto>();
+        await foreach (var row in rs.Rows)
+            list.Add(new EntregaDto((int)(long)row[0], DateTime.Parse((string)row[1]),
+                row[2] is null ? null : (decimal)(double)row[2], (int)(long)row[3], (int)(long)row[4]));
+        return list;
+    }
 
     public async Task<IEnumerable<EntregaDto>> ListarPorAtividadeAsync(int atividadeId)
-        => await _context.Entregas.Where(e => e.AtividadeId == atividadeId)
-            .Select(e => new EntregaDto(e.Id, e.DataEntrega, e.Nota, e.AlunoId, e.AtividadeId)).ToListAsync();
+    {
+        var rs = await _db.Execute(
+            "SELECT Id, DataEntrega, Nota, AlunoId, AtividadeId FROM Entregas WHERE AtividadeId = ?",
+            new object[] { atividadeId });
+        var list = new List<EntregaDto>();
+        await foreach (var row in rs.Rows)
+            list.Add(new EntregaDto((int)(long)row[0], DateTime.Parse((string)row[1]),
+                row[2] is null ? null : (decimal)(double)row[2], (int)(long)row[3], (int)(long)row[4]));
+        return list;
+    }
 
     public async Task<EntregaDto?> ObterPorIdAsync(int id)
     {
-        var e = await _context.Entregas.FindAsync(id);
-        return e is null ? null : ToDto(e);
+        var rs = await _db.Execute(
+            "SELECT Id, DataEntrega, Nota, AlunoId, AtividadeId FROM Entregas WHERE Id = ?",
+            new object[] { id });
+        await foreach (var row in rs.Rows)
+            return new EntregaDto((int)(long)row[0], DateTime.Parse((string)row[1]),
+                row[2] is null ? null : (decimal)(double)row[2], (int)(long)row[3], (int)(long)row[4]);
+        return null;
     }
 
     public async Task<EntregaDto> CriarAsync(EntregaCreateDto dto)
     {
-        var e = new Entrega { AlunoId = dto.AlunoId, AtividadeId = dto.AtividadeId, DataEntrega = DateTime.UtcNow };
-        _context.Entregas.Add(e);
-        await _context.SaveChangesAsync();
-        return ToDto(e);
+        var data = DateTime.UtcNow.ToString("o");
+        await _db.Execute(
+            "INSERT INTO Entregas (DataEntrega, AlunoId, AtividadeId) VALUES (?, ?, ?)",
+            new object[] { data, dto.AlunoId, dto.AtividadeId });
+        var rs = await _db.Execute("SELECT last_insert_rowid()");
+        long id = 0; await foreach (var row in rs.Rows) id = (long)row[0];
+        return new EntregaDto((int)id, DateTime.UtcNow, null, dto.AlunoId, dto.AtividadeId);
     }
 
     public async Task<bool> LancarNotaAsync(int id, decimal nota)
     {
-        var e = await _context.Entregas.FindAsync(id);
-        if (e is null) return false;
-        e.Nota = nota;
-        await _context.SaveChangesAsync();
+        var rs = await _db.Execute("SELECT Id FROM Entregas WHERE Id = ?", new object[] { id });
+        bool existe = false; await foreach (var _ in rs.Rows) existe = true;
+        if (!existe) return false;
+        await _db.Execute("UPDATE Entregas SET Nota = ? WHERE Id = ?", new object[] { (double)nota, id });
         return true;
     }
 
     public async Task<bool> DeletarAsync(int id)
     {
-        var e = await _context.Entregas.FindAsync(id);
-        if (e is null) return false;
-        _context.Entregas.Remove(e);
-        await _context.SaveChangesAsync();
+        var rs = await _db.Execute("SELECT Id FROM Entregas WHERE Id = ?", new object[] { id });
+        bool existe = false; await foreach (var _ in rs.Rows) existe = true;
+        if (!existe) return false;
+        await _db.Execute("DELETE FROM Entregas WHERE Id = ?", new object[] { id });
         return true;
     }
 }

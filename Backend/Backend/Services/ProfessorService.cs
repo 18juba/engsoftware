@@ -1,7 +1,6 @@
 using EscolaApi.Data;
 using EscolaApi.DTOs;
-using EscolaApi.Models;
-using Microsoft.EntityFrameworkCore;
+using LibSql.Client;
 
 namespace EscolaApi.Services;
 
@@ -16,71 +15,84 @@ public interface IProfessorService
 
 public class ProfessorService : IProfessorService
 {
-    private readonly AppDbContext _context;
+    private readonly ILibSqlClient _db;
 
-    public ProfessorService(AppDbContext context) => _context = context;
-
-    private static ProfessorDto ToDto(Professor p, Usuario u) =>
-        new(p.Id, u.Nome, u.Email, p.Siape, p.Departamento);
+    public ProfessorService(TursoClient turso) => _db = turso.Client;
 
     public async Task<IEnumerable<ProfessorDto>> ListarAsync()
-        => await _context.Professores
-            .Include(p => p.Usuario)
-            .Select(p => new ProfessorDto(p.Id, p.Usuario.Nome, p.Usuario.Email, p.Siape, p.Departamento))
-            .ToListAsync();
+    {
+        var rs = await _db.Execute(
+            "SELECT p.Id, u.Nome, u.Email, p.Siape, p.Departamento " +
+            "FROM Professores p JOIN Usuarios u ON p.UsuarioId = u.Id");
+        var list = new List<ProfessorDto>();
+        await foreach (var row in rs.Rows)
+            list.Add(new ProfessorDto(
+                (int)(long)row[0], (string)row[1], (string)row[2],
+                (string)row[3], (string)row[4]));
+        return list;
+    }
 
     public async Task<ProfessorDto?> ObterPorIdAsync(int id)
     {
-        var p = await _context.Professores.Include(x => x.Usuario).FirstOrDefaultAsync(x => x.Id == id);
-        return p is null ? null : ToDto(p, p.Usuario);
+        var rs = await _db.Execute(
+            "SELECT p.Id, u.Nome, u.Email, p.Siape, p.Departamento " +
+            "FROM Professores p JOIN Usuarios u ON p.UsuarioId = u.Id WHERE p.Id = ?",
+            new object[] { id });
+        await foreach (var row in rs.Rows)
+            return new ProfessorDto(
+                (int)(long)row[0], (string)row[1], (string)row[2],
+                (string)row[3], (string)row[4]);
+        return null;
     }
 
     public async Task<ProfessorDto> CriarAsync(ProfessorCreateDto dto)
     {
-        var usuario = new Usuario
-        {
-            Nome = dto.Nome,
-            Email = dto.Email,
-            Senha = BCrypt.Net.BCrypt.HashPassword(dto.Senha),
-            Tipo = TipoUsuario.Professor
-        };
-        _context.Usuarios.Add(usuario);
-        await _context.SaveChangesAsync();
+        var senha = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
+        await _db.Execute(
+            "INSERT INTO Usuarios (Nome, Email, Senha, Tipo) VALUES (?, ?, ?, 'Professor')",
+            new object[] { dto.Nome, dto.Email, senha });
+        var rsUid = await _db.Execute("SELECT last_insert_rowid()");
+        long uid = 0;
+        await foreach (var row in rsUid.Rows) uid = (long)row[0];
 
-        var professor = new Professor
-        {
-            Siape = dto.Siape,
-            Departamento = dto.Departamento,
-            UsuarioId = usuario.Id
-        };
-        _context.Professores.Add(professor);
-        await _context.SaveChangesAsync();
+        await _db.Execute(
+            "INSERT INTO Professores (Siape, Departamento, UsuarioId) VALUES (?, ?, ?)",
+            new object[] { dto.Siape, dto.Departamento, uid });
+        var rsPid = await _db.Execute("SELECT last_insert_rowid()");
+        long pid = 0;
+        await foreach (var row in rsPid.Rows) pid = (long)row[0];
 
-        return ToDto(professor, usuario);
+        return new ProfessorDto((int)pid, dto.Nome, dto.Email, dto.Siape, dto.Departamento);
     }
 
     public async Task<bool> VincularDisciplinaAsync(int professorId, int disciplinaId)
     {
-        if (!await _context.Professores.AnyAsync(p => p.Id == professorId)) return false;
-        if (!await _context.Disciplinas.AnyAsync(d => d.Id == disciplinaId)) return false;
-        if (await _context.ProfessorDisciplinas.AnyAsync(pd =>
-            pd.ProfessorId == professorId && pd.DisciplinaId == disciplinaId)) return false;
+        var rsP = await _db.Execute("SELECT Id FROM Professores WHERE Id = ?", new object[] { professorId });
+        bool p = false; await foreach (var _ in rsP.Rows) p = true;
+        if (!p) return false;
 
-        _context.ProfessorDisciplinas.Add(new ProfessorDisciplina
-        {
-            ProfessorId = professorId,
-            DisciplinaId = disciplinaId
-        });
-        await _context.SaveChangesAsync();
+        var rsD = await _db.Execute("SELECT Id FROM Disciplinas WHERE Id = ?", new object[] { disciplinaId });
+        bool d = false; await foreach (var _ in rsD.Rows) d = true;
+        if (!d) return false;
+
+        var rsV = await _db.Execute(
+            "SELECT ProfessorId FROM ProfessorDisciplinas WHERE ProfessorId = ? AND DisciplinaId = ?",
+            new object[] { professorId, disciplinaId });
+        bool v = false; await foreach (var _ in rsV.Rows) v = true;
+        if (v) return false;
+
+        await _db.Execute(
+            "INSERT INTO ProfessorDisciplinas (ProfessorId, DisciplinaId) VALUES (?, ?)",
+            new object[] { professorId, disciplinaId });
         return true;
     }
 
     public async Task<bool> DeletarAsync(int id)
     {
-        var p = await _context.Professores.FindAsync(id);
-        if (p is null) return false;
-        _context.Professores.Remove(p);
-        await _context.SaveChangesAsync();
+        var rs = await _db.Execute("SELECT Id FROM Professores WHERE Id = ?", new object[] { id });
+        bool existe = false; await foreach (var _ in rs.Rows) existe = true;
+        if (!existe) return false;
+        await _db.Execute("DELETE FROM Professores WHERE Id = ?", new object[] { id });
         return true;
     }
 }

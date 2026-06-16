@@ -1,7 +1,6 @@
 using EscolaApi.Data;
 using EscolaApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
@@ -9,13 +8,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. CONEXÃO COM O BANCO DE DADOS
-var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
-    ?? builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
-
-// 2. CORS
+// 1. CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -25,6 +18,9 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader();
     });
 });
+
+// 2. TURSO CLIENT
+builder.Services.AddSingleton<TursoClient>();
 
 // 3. JWT
 builder.Services.AddAuthentication(options =>
@@ -46,84 +42,53 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
-
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
-        {
-            var auth = context.Request.Headers["Authorization"].ToString();
-            Console.WriteLine($"📨 Header recebido: '{auth}'");
-            //Console.WriteLine($"📨 Header recebido: foi recebido");
-            return Task.CompletedTask;
-        },
-        OnAuthenticationFailed = context =>
-        {
-            Console.WriteLine($"❌ JWT FALHOU: {context.Exception.GetType().Name}: {context.Exception.Message}");
-            return Task.CompletedTask;
-        },
-        OnTokenValidated = context =>
-        {
-            Console.WriteLine("✅ JWT válido!");
-            return Task.CompletedTask;
-        },
-        OnChallenge = context =>
-        {
-            Console.WriteLine($"🔒 Challenge: {context.Error} - {context.ErrorDescription}");
-            return Task.CompletedTask;
-        }
-    };
 });
 
-// 4. SERVIÇOS E SWAGGER
+// 4. SERVIÇOS
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAlunoService, AlunoService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<IProfessorService, ProfessorService>();
+builder.Services.AddScoped<IDisciplinaService, DisciplinaService>();
+builder.Services.AddScoped<ITurmaService, TurmaService>();
+builder.Services.AddScoped<IMatriculaService, MatriculaService>();
+builder.Services.AddScoped<IAtividadeService, AtividadeService>();
+builder.Services.AddScoped<IEntregaService, EntregaService>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// 5. SWAGGER
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Escola API", Version = "v1" });
-
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Insira apenas o token JWT (sem o prefixo Bearer)",
+        Description = "Insira apenas o token JWT",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT"
     });
-
     c.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
     {
-        {
-            new OpenApiSecuritySchemeReference("Bearer", null),
-            new List<string>()
-        }
+        { new OpenApiSecuritySchemeReference("Bearer", null), new List<string>() }
     });
 });
 
 var app = builder.Build();
 
-// 5. MIGRAÇÕES
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
-}
-
-// 6. SWAGGER JSON (necessário para o Scalar ler)
 app.UseSwagger();
-
-// 7. SCALAR no lugar do Swagger UI
 app.MapScalarApiReference(options =>
 {
     options.Title = "Escola API";
     options.Theme = ScalarTheme.Purple;
-    options.DefaultHttpClient = new(ScalarTarget.Http, ScalarClient.Http11);
     options.OpenApiRoutePattern = "/swagger/v1/swagger.json";
 });
 
-// 8. PIPELINE
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();

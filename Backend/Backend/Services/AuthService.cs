@@ -1,11 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using EscolaApi.Data;
 using EscolaApi.DTOs;
 using EscolaApi.Models;
+using LibSql.Client;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EscolaApi.Services;
 
@@ -16,56 +16,50 @@ public interface IAuthService
 
 public class AuthService : IAuthService
 {
-    private readonly AppDbContext _context;
+    private readonly ILibSqlClient _db;
     private readonly IConfiguration _config;
-    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(AppDbContext context, IConfiguration config, ILogger<AuthService> logger)
+    public AuthService(TursoClient turso, IConfiguration config)
     {
-        _context = context;
+        _db = turso.Client;
         _config = config;
-        _logger = logger;
     }
 
     public async Task<LoginResponse?> LoginAsync(LoginRequest request)
     {
-        _logger.LogInformation("Tentativa de login recebida para o e-mail: {Email}", request.Email);
+        var rs = await _db.Execute(
+            "SELECT Id, Nome, Email, Senha, Tipo FROM Usuarios WHERE Email = ?",
+            new object[] { request.Email });
 
-        var usuario = await _context.Usuarios
-            .FirstOrDefaultAsync(u => u.Email == request.Email);
-
-        if (usuario is null || !BCrypt.Net.BCrypt.Verify(request.Senha, usuario.Senha))
+        string? id = null, nome = null, email = null, senha = null, tipo = null;
+        await foreach (var row in rs.Rows)
         {
-            _logger.LogWarning("Falha na autenticação: E-mail ou senha inválidos para {Email}", request.Email);
-            return null;
+            id    = row[0].ToString();
+            nome  = (string)row[1];
+            email = (string)row[2];
+            senha = (string)row[3];
+            tipo  = (string)row[4];
         }
 
-        _logger.LogInformation("Usuário {Email} autenticado com sucesso. Gerando token JWT...", request.Email);
+        if (senha is null || !BCrypt.Net.BCrypt.Verify(request.Senha, senha))
+            return null;
 
-        var token = GerarToken(usuario);
-
-        return new LoginResponse(token, usuario.Nome, usuario.Tipo.ToString());
+        var token = GerarToken(id!, nome!, email!, tipo!);
+        return new LoginResponse(token, nome!, tipo!);
     }
 
-    private string GerarToken(Usuario usuario)
+    private string GerarToken(string id, string nome, string email, string tipo)
     {
-        var jwtKey = _config["Jwt:Key"];
-
-        if (string.IsNullOrEmpty(jwtKey) || jwtKey.Length < 32)
-        {
-            _logger.LogCritical("A chave configurada em 'Jwt:Key' está vazia ou possui menos de 32 caracteres (256 bits).");
-            throw new InvalidOperationException("Configuração de segurança JWT inválida no servidor.");
-        }
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-            new Claim(ClaimTypes.Email, usuario.Email),
-            new Claim(ClaimTypes.Name, usuario.Nome),
-            new Claim(ClaimTypes.Role, usuario.Tipo.ToString())
+            new Claim(ClaimTypes.NameIdentifier, id),
+            new Claim(ClaimTypes.Email, email),
+            new Claim(ClaimTypes.Name, nome),
+            new Claim(ClaimTypes.Role, tipo)
         };
 
         var token = new JwtSecurityToken(
@@ -73,8 +67,7 @@ public class AuthService : IAuthService
             audience: _config["Jwt:Audience"],
             claims: claims,
             expires: DateTime.UtcNow.AddHours(8),
-            signingCredentials: creds
-        );
+            signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }

@@ -1,8 +1,6 @@
 using EscolaApi.Data;
 using EscolaApi.DTOs;
-using EscolaApi.Models;
-using Microsoft.EntityFrameworkCore;
-using BCrypt.Net;
+using LibSql.Client;
 
 namespace EscolaApi.Services;
 
@@ -16,61 +14,65 @@ public interface IAlunoService
 
 public class AlunoService : IAlunoService
 {
-    private readonly AppDbContext _context;
+    private readonly ILibSqlClient _db;
 
-    public AlunoService(AppDbContext context) => _context = context;
-
-    private static AlunoDto ToDto(Aluno a, Usuario u) =>
-        new(a.Id, u.Nome, u.Email, a.Matricula, a.Curso);
+    public AlunoService(TursoClient turso) => _db = turso.Client;
 
     public async Task<IEnumerable<AlunoDto>> ListarAsync()
-        => await _context.Alunos
-            .Include(a => a.Usuario)
-            .Select(a => new AlunoDto(a.Id, a.Usuario.Nome, a.Usuario.Email, a.Matricula, a.Curso))
-            .ToListAsync();
+    {
+        var rs = await _db.Execute(
+            "SELECT a.Id, u.Nome, u.Email, a.Matricula, a.Curso " +
+            "FROM Alunos a JOIN Usuarios u ON a.UsuarioId = u.Id");
+        var list = new List<AlunoDto>();
+        await foreach (var row in rs.Rows)
+            list.Add(new AlunoDto(
+                (int)(long)row[0], (string)row[1], (string)row[2],
+                (string)row[3], (string)row[4]));
+        return list;
+    }
 
     public async Task<AlunoDto?> ObterPorIdAsync(int id)
     {
-        var a = await _context.Alunos.Include(x => x.Usuario).FirstOrDefaultAsync(x => x.Id == id);
-        return a is null ? null : ToDto(a, a.Usuario);
+        var rs = await _db.Execute(
+            "SELECT a.Id, u.Nome, u.Email, a.Matricula, a.Curso " +
+            "FROM Alunos a JOIN Usuarios u ON a.UsuarioId = u.Id WHERE a.Id = ?",
+            new object[] { id });
+        await foreach (var row in rs.Rows)
+            return new AlunoDto(
+                (int)(long)row[0], (string)row[1], (string)row[2],
+                (string)row[3], (string)row[4]);
+        return null;
     }
 
     public async Task<AlunoDto> CriarAsync(AlunoCreateDto dto)
     {
-        try
-        {
-            var usuario = new Usuario
-            {
-                Nome = dto.Nome,
-                Email = dto.Email,
-                Senha = BCrypt.Net.BCrypt.HashPassword(dto.Senha),
-                Tipo = TipoUsuario.Aluno
-            };
+        var senha = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
+        await _db.Execute(
+            "INSERT INTO Usuarios (Nome, Email, Senha, Tipo) VALUES (?, ?, ?, 'Aluno')",
+            new object[] { dto.Nome, dto.Email, senha });
 
-            var aluno = new Aluno
-            {
-                Matricula = dto.Matricula,
-                Curso = dto.Curso,
-                Usuario = usuario
-            };
+        var rsId = await _db.Execute("SELECT last_insert_rowid()");
+        long usuarioId = 0;
+        await foreach (var row in rsId.Rows) usuarioId = (long)row[0];
 
-            _context.Alunos.Add(aluno);
-            await _context.SaveChangesAsync();
+        await _db.Execute(
+            "INSERT INTO Alunos (Matricula, Curso, UsuarioId) VALUES (?, ?, ?)",
+            new object[] { dto.Matricula, dto.Curso, usuarioId });
 
-            return ToDto(aluno, usuario);
-        }
-        catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
-        {
-            var erroReal = ex.InnerException?.Message ?? ex.Message;
-            throw new Exception($"[ERRO BANCO POSTGRES]: {erroReal}", ex);
-        }
+        var rsAlunoId = await _db.Execute("SELECT last_insert_rowid()");
+        long alunoId = 0;
+        await foreach (var row in rsAlunoId.Rows) alunoId = (long)row[0];
+
+        return new AlunoDto((int)alunoId, dto.Nome, dto.Email, dto.Matricula, dto.Curso);
     }
+
     public async Task<bool> DeletarAsync(int id)
     {
-        var a = await _context.Alunos.FindAsync(id);
-        if (a is null) return false;
-        _context.Alunos.Remove(a);
-        await _context.SaveChangesAsync();
+        var rs = await _db.Execute("SELECT Id FROM Alunos WHERE Id = ?", new object[] { id });
+        bool existe = false;
+        await foreach (var _ in rs.Rows) existe = true;
+        if (!existe) return false;
+        await _db.Execute("DELETE FROM Alunos WHERE Id = ?", new object[] { id });
         return true;
     }
 }
