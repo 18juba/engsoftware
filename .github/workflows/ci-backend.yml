@@ -12,7 +12,7 @@ on:
 
 defaults:
   run:
-    working-directory: Backend/Backend
+    working-directory: Backend
 
 jobs:
   build:
@@ -32,7 +32,7 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build
+        run: dotnet build --no-restore -c Release
 
       - name: Test
         run: dotnet test EscolaApi.Tests/EscolaApi.Tests.csproj
