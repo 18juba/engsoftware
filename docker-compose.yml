@@ -6,12 +6,14 @@ services:
       context: ./auth-service
       dockerfile: Dockerfile
     environment:
-      - APP_URL=${APP_URL:-http://localhost:8000}
-      - DATABASE_URL=libsql://engsoftware-auth-18juba.aws-us-east-1.turso.io
-      - DATABASE_TOKEN=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODE2MzczNTAsImlkIjoiMDE5ZWQxYWItMjIwMS03YzNkLWI0OGMtZmE4YzM2OTI4ZGI5IiwicmlkIjoiODU0ZmZhZjItZGRhNy00ZjdkLWEzNTktNjMzNjc1OTViNmYyIn0
-      - JWT_SECRET=${JWT_SECRET:-AASGAEGEW}
-      - JWT_TTL_MINUTES=${JWT_TTL_MINUTES:-60}
-      - CORS_ORIGINS=http://localhost:3000
+      - APP_URL=http://localhost:8000
+      - DATABASE_URL=${AUTH_DB_URL}
+      - DATABASE_TOKEN=${AUTH_DB_TOKEN}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_TTL_MINUTES=${JWT_TTL_MINUTES}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - JWT_ISSUER=EscolaApi
+      - JWT_AUDIENCE=EscolaApiUsers
     ports:
       - "${AUTH_SERVICE_PORT:-8000}:8000"
     networks:
@@ -29,8 +31,7 @@ services:
       - TURSO_DATABASE_URL=https://escola-db-carlos9027.aws-us-west-2.turso.io
       - TURSO_AUTH_TOKEN=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODE2NDY5NDMsImlkIjoiMDE5ZWQyNmUtYmEwMS03ZjI2LTk0MTMtMWIwNmRhODY1MTBlIiwicmlkIjoiOWNkOTM0MTAtZjY4Ni00NWRlLTkwY2MtNWJmYjgyZjE2Y2U3In0.B7Lt_53wIDiQZvWpVerA70U_eOilpjwd5DW25s6YSqfVPDvhPB4DCX0fPY84fvg9n_rbQdFXfclsGurCPd2rCA
       - Jwt__Key=${JWT_SECRET:-UmaChaveMuitoSecretaComPeloMenos32Caracteres!}
-      - Jwt__Issuer=EscolaApi
-      - Jwt__Audience=EscolaClientes
+      
     ports:
       - "8080:8080"
     depends_on:

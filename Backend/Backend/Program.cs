@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
 // 2. Turso Client
 builder.Services.AddSingleton<TursoClient>();
 
-// 3. JWT Authentication
+// 3. JWT Authentication (Validação RIGOROSA ativada)
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -32,17 +32,29 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("A chave JWT não foi configurada nas variáveis de ambiente.");
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuerSigningKey = false, // Desativado temporariamente
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "chave_temporaria_com_mais_de_32_caracteres_p_build")),
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = false
+        // 🔒 Exige e valida a assinatura com a chave secreta de 32+ caracteres
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+
+        // 🔒 Exige e valida quem emitiu o token (Issuer)
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+
+        // 🔒 Exige e valida quem pode consumir o token (Audience)
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+
+        // 🔒 Exige e valida se o token já expirou
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.FromMinutes(2) // Pequena margem de tolerância para diferença de relógio entre os servidores
     };
 });
 
-// 4. Services
+// 4. Injeção de Dependência dos Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAlunoService, AlunoService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
@@ -53,7 +65,7 @@ builder.Services.AddScoped<ITurmaService, TurmaService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// 5. Swagger + Scalar
+// 5. Configuração do Swagger Generator
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -81,18 +93,24 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// ==================== MIDDLEWARES ====================
+// ==================== MIDDLEWARES (PIPELINE) ====================
 
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+
+// 1ª Opção Visual: Interface Clássica do Swagger UI
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.MapScalarApiReference(options =>
-    {
-        options.Title = "Escola API - Documentação";
-        options.Theme = ScalarTheme.Purple;
-        options.OpenApiRoutePattern = "/swagger/v1/swagger.json";
-    });
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Escola API v1");
+    options.RoutePrefix = "swagger";
+});
+
+// 2ª Opção Visual: Interface Moderna do Scalar
+app.MapScalarApiReference(options =>
+{
+    options.Title = "Escola API - Documentação";
+    options.Theme = ScalarTheme.Purple;
+    options.OpenApiRoutePattern = "/swagger/v1/swagger.json";
+});
 
 app.MapGet("/health", () => Results.Ok(new
 {
@@ -103,6 +121,7 @@ app.MapGet("/health", () => Results.Ok(new
 
 app.UseCors("AllowAll");
 
+// 🔒 Bloqueia as rotas de acordo com a configuração de autorização e JWT acima
 app.UseAuthentication();
 app.UseAuthorization();
 

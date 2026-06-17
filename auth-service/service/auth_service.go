@@ -90,13 +90,16 @@ func (service *AuthService) Login(email string, password string) (string, time.T
 
 	now := time.Now().UTC()
 	expiresAt := now.Add(service.tokenTTL)
-	claims := jwt.RegisteredClaims{
-		Subject:   strconv.Itoa(user.ID),
-		ExpiresAt: jwt.NewNumericDate(expiresAt),
-		IssuedAt:  jwt.NewNumericDate(now),
-		NotBefore: jwt.NewNumericDate(now),
-		Issuer:    service.jwtIssuer,
-		Audience:  jwt.ClaimStrings{service.jwtAudience},
+
+	// 🔥 MODIFICAÇÃO: Usando MapClaims para garantir que 'aud' seja uma string simples
+	// e que todos os campos obrigatórios estejam presentes conforme esperado pelo seu front/C#.
+	claims := jwt.MapClaims{
+		"sub": strconv.Itoa(user.ID),
+		"exp": expiresAt.Unix(),
+		"iat": now.Unix(),
+		"nbf": now.Unix(),
+		"iss": service.jwtIssuer,
+		"aud": service.jwtAudience,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
