@@ -34,18 +34,11 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
-
-        ValidateIssuer = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-
-        ValidateAudience = true,
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
+        ValidateIssuerSigningKey = false, // Desativado temporariamente
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "chave_temporaria_com_mais_de_32_caracteres_p_build")),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = false
     };
 });
 
