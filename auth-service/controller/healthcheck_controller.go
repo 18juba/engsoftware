@@ -6,6 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type HealthcheckController struct {
@@ -39,4 +41,8 @@ func (controller *HealthcheckController) Check(context *gin.Context) {
 			"database": dbStatus,
 		},
 	})
+}
+
+func (controller *HealthcheckController) Metrics(context *gin.Context) {
+	promhttp.Handler().ServeHTTP(context.Writer, context.Request)
 }

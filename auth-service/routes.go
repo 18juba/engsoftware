@@ -6,6 +6,7 @@ import (
 
 func setupRoutes(server *gin.Engine, deps *Dependencies, authMiddleware gin.HandlerFunc) {
 	server.GET("/healthcheck", deps.HealthcheckController.Check)
+	server.GET("/metrics", deps.HealthcheckController.Metrics)
 
 	server.POST("/auth/register", deps.AuthController.Register)
 	server.POST("/auth/login", deps.AuthController.Login)

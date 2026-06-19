@@ -17,33 +17,27 @@ import (
 )
 
 func main() {
-	// Carrega variáveis de ambiente
 	_ = godotenv.Load()
 
-	// Banco de dados
 	dbConnection, err := db.ConnectDB(os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal("Erro ao conectar ao banco:", err)
 	}
 
-	// Migrações
 	if err := dbConnection.AutoMigrate(&model.User{}); err != nil {
 		log.Fatal("Erro ao migrar banco de dados:", err)
 	}
 
-	// JWT
 	jwtSecret := os.Getenv("JWT_SECRET")
 
-	// Dependências da aplicação
 	deps := setupDependencies(dbConnection)
 
-	// Middleware de autenticação
 	authMiddleware := middleware.RequireAuth(jwtSecret)
 
-	// Servidor Gin
 	server := gin.Default()
+	server.Use(gin.Logger(), gin.Recovery())
+	server.Use(middleware.PrometheusMiddleware())
 
-	// Rotas
 	setupRoutes(
 		server,
 		deps,
@@ -55,7 +49,6 @@ func main() {
 		Handler: server,
 	}
 
-	// Inicialização do servidor
 	go func() {
 		log.Printf("Iniciando servidor em %s", srv.Addr)
 
@@ -65,7 +58,6 @@ func main() {
 		}
 	}()
 
-	// Graceful Shutdown
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
