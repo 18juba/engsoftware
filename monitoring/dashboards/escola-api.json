@@ -1,0 +1,82 @@
+{
+  "title": "EscolaApi — Visão Geral",
+  "uid": "escola-api-overview",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "15s",
+  "time": { "from": "now-1h", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Requisições por segundo",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "rate(http_requests_received_total{job=\"backend-aspnet\"}[1m])",
+          "legendFormat": "{{method}} {{route}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Tempo de resposta (p99)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{job=\"backend-aspnet\"}[1m]))",
+          "legendFormat": "p99 {{route}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Taxa de erros (5xx)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "rate(http_requests_received_total{job=\"backend-aspnet\", code=~\"5..\"}[1m])",
+          "legendFormat": "{{code}} {{route}}"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Uso de memória",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "process_working_set_bytes{job=\"backend-aspnet\"} / 1024 / 1024",
+          "legendFormat": "MB em uso"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Total de requisições",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 16, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "sum(http_requests_received_total{job=\"backend-aspnet\"})",
+          "legendFormat": "Total"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Uptime (segundos)",
+      "type": "stat",
+      "gridPos": { "x": 6, "y": 16, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "process_start_time_seconds{job=\"backend-aspnet\"}",
+          "legendFormat": "Start time"
+        }
+      ]
+    }
+  ]
+}

@@ -16,7 +16,7 @@ defaults:
 
 jobs:
   build:
-    name: Restore & build
+    name: Restore & Build & Test
     runs-on: ubuntu-latest
 
     steps:
@@ -36,3 +36,30 @@ jobs:
 
       - name: Test
         run: dotnet test EscolaApi.Tests/EscolaApi.Tests.csproj
+
+  publish:
+    name: Build & Push Container
+    runs-on: ubuntu-latest
+    needs: build # só roda se o build/test passar
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./Backend/Backend
+          dockerfile: ./Backend/Backend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/backend:latest
+            ghcr.io/${{ github.repository }}/backend:${{ github.sha }}

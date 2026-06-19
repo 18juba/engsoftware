@@ -25,13 +25,13 @@ services:
       context: ./Backend/Backend
       dockerfile: Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development # Alterado para Development para expor o Swagger/Scalar localmente
+      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      # Conexão do C# EscolaApi com o cluster do Turso
       - TURSO_DATABASE_URL=https://escola-db-carlos9027.aws-us-west-2.turso.io
       - TURSO_AUTH_TOKEN=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODE2NDY5NDMsImlkIjoiMDE5ZWQyNmUtYmEwMS03ZjI2LTk0MTMtMWIwNmRhODY1MTBlIiwicmlkIjoiOWNkOTM0MTAtZjY4Ni00NWRlLTkwY2MtNWJmYjgyZjE2Y2U3In0.B7Lt_53wIDiQZvWpVerA70U_eOilpjwd5DW25s6YSqfVPDvhPB4DCX0fPY84fvg9n_rbQdFXfclsGurCPd2rCA
       - Jwt__Key=${JWT_SECRET:-UmaChaveMuitoSecretaComPeloMenos32Caracteres!}
-      
+      - Jwt__Issuer=EscolaApi
+      - Jwt__Audience=EscolaApiUsers
     ports:
       - "8080:8080"
     depends_on:
@@ -39,6 +39,12 @@ services:
     networks:
       - app_network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
 
   frontend:
     build:
@@ -58,6 +64,37 @@ services:
       - app_network
     restart: unless-stopped
 
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+    - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    - ./monitoring/grafana/dashboards:/etc/grafana/dashboards  # ← adicione essa linha no grafana
+    ports:
+      - "9090:9090"
+    networks:
+      - app_network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - app_network
+    restart: unless-stopped
+
 networks:
   app_network:
     driver: bridge
+
+volumes:
+  grafana_data:

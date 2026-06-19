@@ -122,18 +122,6 @@
         }
       }
     },
-    "/health": {
-      "get": {
-        "tags": [
-          "Backend"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Disciplinas": {
       "get": {
         "tags": [
@@ -722,9 +710,6 @@
     },
     {
       "name": "Auth"
-    },
-    {
-      "name": "Backend"
     },
     {
       "name": "Disciplinas"

@@ -3,8 +3,12 @@
   "WorkspaceRootPath": "D:\\Documentos\\Dev\\engsoftware\\Backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\escolaapi.tests\\obj\\escolaapi.tests.csproj.nuget.g.props||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\escolaapi.tests\\obj\\escolaapi.tests.csproj.nuget.g.props||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\escolaapi.tests\\obj\\escolaapi.tests.csproj.nuget.dgspec.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -13,14 +17,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\services\\alunoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\services\\alunoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\controllers\\domaincontrollers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -62,24 +58,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 11,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "EscolaApi.Tests.csproj.nuget.g.props",
-              "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\EscolaApi.Tests\\obj\\EscolaApi.Tests.csproj.nuget.g.props",
-              "RelativeDocumentMoniker": "Backend\\EscolaApi.Tests\\obj\\EscolaApi.Tests.csproj.nuget.g.props",
-              "ToolTip": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\EscolaApi.Tests\\obj\\EscolaApi.Tests.csproj.nuget.g.props",
-              "RelativeToolTip": "Backend\\EscolaApi.Tests\\obj\\EscolaApi.Tests.csproj.nuget.g.props",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABEAAACBAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2026-06-17T17:32:43.291Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "EscolaApi.Tests.csproj.nuget.dgspec.json",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\EscolaApi.Tests\\obj\\EscolaApi.Tests.csproj.nuget.dgspec.json",
               "RelativeDocumentMoniker": "Backend\\EscolaApi.Tests\\obj\\EscolaApi.Tests.csproj.nuget.dgspec.json",
@@ -87,12 +70,11 @@
               "RelativeToolTip": "Backend\\EscolaApi.Tests\\obj\\EscolaApi.Tests.csproj.nuget.dgspec.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-06-17T17:32:41.185Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-17T17:32:41.185Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "UsuarioService.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\UsuarioService.cs",
               "RelativeDocumentMoniker": "Backend\\Services\\UsuarioService.cs",
@@ -104,7 +86,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 6,
               "Title": "ProfessorService.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\ProfessorService.cs",
               "RelativeDocumentMoniker": "Backend\\Services\\ProfessorService.cs",
@@ -116,7 +98,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 8,
               "Title": "DomainServices.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\DomainServices.cs",
               "RelativeDocumentMoniker": "Backend\\Services\\DomainServices.cs",
@@ -128,7 +110,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "AlunoService.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\AlunoService.cs",
               "RelativeDocumentMoniker": "Backend\\Services\\AlunoService.cs",
@@ -136,12 +118,11 @@
               "RelativeToolTip": "Backend\\Services\\AlunoService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-16T16:53:20.237Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-16T16:53:20.237Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 7,
               "Title": "AuthService.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\AuthService.cs",
               "RelativeDocumentMoniker": "Backend\\Services\\AuthService.cs",
@@ -153,7 +134,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 9,
               "Title": "AuthController.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Backend\\Controllers\\AuthController.cs",
@@ -165,7 +146,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 11,
               "Title": "Disciplina.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Models\\Disciplina.cs",
               "RelativeDocumentMoniker": "Backend\\Models\\Disciplina.cs",
@@ -177,7 +158,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "DomainControllers.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Controllers\\DomainControllers.cs",
               "RelativeDocumentMoniker": "Backend\\Controllers\\DomainControllers.cs",
@@ -189,7 +170,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 10,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Backend\\appsettings.Development.json",
@@ -201,27 +182,29 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\appsettings.json",
               "RelativeDocumentMoniker": "Backend\\appsettings.json",
               "ToolTip": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\appsettings.json",
               "RelativeToolTip": "Backend\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAKAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-06-11T23:46:13.08Z"
+              "WhenOpened": "2026-06-11T23:46:13.08Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Program.cs",
               "RelativeDocumentMoniker": "Backend\\Program.cs",
               "ToolTip": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Program.cs",
               "RelativeToolTip": "Backend\\Program.cs",
-              "ViewState": "AgIAACQAAAAAAAAAAAAAAAQAAAAYAAAAAAAAAA==",
+              "ViewState": "AgIAAFEAAAAAAAAAAADwv1sAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-11T23:20:29.896Z"
+              "WhenOpened": "2026-06-11T23:20:29.896Z",
+              "EditorCaption": ""
             }
           ]
         }
