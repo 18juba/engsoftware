@@ -11,9 +11,9 @@ services:
       - DATABASE_TOKEN=${AUTH_DB_TOKEN}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_TTL_MINUTES=${JWT_TTL_MINUTES}
+      - JWT_ISSUER=${JWT_ISSUER}
+      - JWT_AUDIENCE=${JWT_AUDIENCE}
       - CORS_ORIGINS=${CORS_ORIGINS}
-      - JWT_ISSUER=EscolaApi
-      - JWT_AUDIENCE=EscolaApiUsers
     ports:
       - "${AUTH_SERVICE_PORT:-8000}:8000"
     networks:
@@ -27,11 +27,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      - TURSO_DATABASE_URL=https://escola-db-carlos9027.aws-us-west-2.turso.io
-      - TURSO_AUTH_TOKEN=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODE2NDY5NDMsImlkIjoiMDE5ZWQyNmUtYmEwMS03ZjI2LTk0MTMtMWIwNmRhODY1MTBlIiwicmlkIjoiOWNkOTM0MTAtZjY4Ni00NWRlLTkwY2MtNWJmYjgyZjE2Y2U3In0.B7Lt_53wIDiQZvWpVerA70U_eOilpjwd5DW25s6YSqfVPDvhPB4DCX0fPY84fvg9n_rbQdFXfclsGurCPd2rCA
-      - Jwt__Key=${JWT_SECRET:-UmaChaveMuitoSecretaComPeloMenos32Caracteres!}
-      - Jwt__Issuer=EscolaApi
-      - Jwt__Audience=EscolaApiUsers
+      - TURSO_DATABASE_URL=${ESCOLA_DB_URL}
+      - TURSO_AUTH_TOKEN=${ESCOLA_DB_TOKEN}
+      - Jwt__Key=${JWT_SECRET}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
     ports:
       - "8080:8080"
     depends_on:
@@ -67,9 +67,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     volumes:
-    - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-    - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
-    - ./monitoring/grafana/dashboards:/etc/grafana/dashboards  # ← adicione essa linha no grafana
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     networks:
