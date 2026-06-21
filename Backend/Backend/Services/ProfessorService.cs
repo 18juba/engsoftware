@@ -74,60 +74,95 @@ public class ProfessorService : IProfessorService
 
     public async Task<ProfessorDto> CriarAsync(ProfessorCreateDto dto)
     {
+        // Verifica se email já existe
+        var rsEmail = await _db.Execute(
+            "SELECT COUNT(*) FROM Usuarios WHERE Email = ?",
+            new object[] { dto.Email });
+        foreach (var row in rsEmail.Rows)
+        {
+            var r = row.ToArray();
+            var count = r[0] is Integer c ? (int)c.Value : 0;
+            if (count > 0)
+                throw new InvalidOperationException($"Email '{dto.Email}' já está em uso.");
+        }
+
+        // Verifica se SIAPE já existe
+        var rsSiape = await _db.Execute(
+            "SELECT COUNT(*) FROM Professores WHERE Siape = ?",
+            new object[] { dto.Siape });
+        foreach (var row in rsSiape.Rows)
+        {
+            var r = row.ToArray();
+            var count = r[0] is Integer c ? (int)c.Value : 0;
+            if (count > 0)
+                throw new InvalidOperationException($"SIAPE '{dto.Siape}' já está em uso.");
+        }
+
         var senhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
 
-        // Insere Usuário
+        // Insere usuário
         await _db.Execute(
             "INSERT INTO Usuarios (Nome, Email, Senha, Tipo) VALUES (?, ?, ?, 'Professor')",
             new object[] { dto.Nome, dto.Email, senhaHash });
 
-        // Pega ID do usuário
-        var rsUsuario = await _db.Execute("SELECT last_insert_rowid()");
-        long usuarioId = 0;
+        // Pega ID do usuário pelo email
+        var rsUsuario = await _db.Execute(
+            "SELECT Id FROM Usuarios WHERE Email = ?",
+            new object[] { dto.Email });
+        int usuarioId = 0;
         foreach (var row in rsUsuario.Rows)
         {
             var r = row.ToArray();
-            usuarioId = r[0] is Integer idVal ? idVal.Value : 0;
+            usuarioId = r[0] is Integer idVal ? (int)idVal.Value : 0;
         }
 
-        // Insere Professor
+        // Insere professor
         await _db.Execute(
             "INSERT INTO Professores (Siape, Departamento, UsuarioId) VALUES (?, ?, ?)",
             new object[] { dto.Siape, dto.Departamento, usuarioId });
 
-        // Pega ID do professor
-        var rsProfessor = await _db.Execute("SELECT last_insert_rowid()");
-        long professorId = 0;
+        // Pega ID do professor pelo SIAPE
+        var rsProfessor = await _db.Execute(
+            "SELECT Id FROM Professores WHERE Siape = ?",
+            new object[] { dto.Siape });
+        int professorId = 0;
         foreach (var row in rsProfessor.Rows)
         {
             var r = row.ToArray();
-            professorId = r[0] is Integer idVal ? idVal.Value : 0;
+            professorId = r[0] is Integer idVal2 ? (int)idVal2.Value : 0;
         }
 
-        return new ProfessorDto((int)professorId, dto.Nome, dto.Email, dto.Siape, dto.Departamento);
+        return new ProfessorDto(professorId, dto.Nome, dto.Email, dto.Siape, dto.Departamento);
     }
 
     public async Task<bool> VincularDisciplinaAsync(int professorId, int disciplinaId)
     {
+        // Força int explícito — Libsql não aceita Int64
+        int pId = (int)professorId;
+        int dId = (int)disciplinaId;
+
         // Verifica se professor existe
-        var rsP = await _db.Execute("SELECT Id FROM Professores WHERE Id = ?", new object[] { professorId });
+        var rsP = await _db.Execute(
+            "SELECT Id FROM Professores WHERE Id = ?",
+            new object[] { pId });
         if (!rsP.Rows.Any()) return false;
 
         // Verifica se disciplina existe
-        var rsD = await _db.Execute("SELECT Id FROM Disciplinas WHERE Id = ?", new object[] { disciplinaId });
+        var rsD = await _db.Execute(
+            "SELECT Id FROM Disciplinas WHERE Id = ?",
+            new object[] { dId });
         if (!rsD.Rows.Any()) return false;
 
         // Verifica se vínculo já existe
         var rsV = await _db.Execute(
             "SELECT ProfessorId FROM ProfessorDisciplinas WHERE ProfessorId = ? AND DisciplinaId = ?",
-            new object[] { professorId, disciplinaId });
-
+            new object[] { pId, dId });
         if (rsV.Rows.Any()) return false;
 
         // Cria o vínculo
         await _db.Execute(
             "INSERT INTO ProfessorDisciplinas (ProfessorId, DisciplinaId) VALUES (?, ?)",
-            new object[] { professorId, disciplinaId });
+            new object[] { pId, dId });
 
         return true;
     }

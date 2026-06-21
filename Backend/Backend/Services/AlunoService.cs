@@ -73,6 +73,30 @@ public class AlunoService : IAlunoService
 
     public async Task<AlunoDto> CriarAsync(AlunoCreateDto dto)
     {
+        // Verifica se email já existe
+        var rsEmail = await _db.Execute(
+            "SELECT COUNT(*) FROM Usuarios WHERE Email = ?",
+            new object[] { dto.Email });
+        foreach (var row in rsEmail.Rows)
+        {
+            var r = row.ToArray();
+            var count = r[0] is Integer c ? (int)c.Value : 0;
+            if (count > 0)
+                throw new InvalidOperationException($"Email '{dto.Email}' já está em uso.");
+        }
+
+        // Verifica se matrícula já existe
+        var rsMatricula = await _db.Execute(
+            "SELECT COUNT(*) FROM Alunos WHERE Matricula = ?",
+            new object[] { dto.Matricula });
+        foreach (var row in rsMatricula.Rows)
+        {
+            var r = row.ToArray();
+            var count = r[0] is Integer c ? (int)c.Value : 0;
+            if (count > 0)
+                throw new InvalidOperationException($"Matrícula '{dto.Matricula}' já está em uso.");
+        }
+
         var senhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
 
         // Insere usuário
@@ -80,13 +104,15 @@ public class AlunoService : IAlunoService
             "INSERT INTO Usuarios (Nome, Email, Senha, Tipo) VALUES (?, ?, ?, 'Aluno')",
             new object[] { dto.Nome, dto.Email, senhaHash });
 
-        // Pega ID do usuário
-        var rsUsuario = await _db.Execute("SELECT last_insert_rowid()");
-        long usuarioId = 0;
+        // Pega ID do usuário pelo email
+        var rsUsuario = await _db.Execute(
+            "SELECT Id FROM Usuarios WHERE Email = ?",
+            new object[] { dto.Email });
+        int usuarioId = 0;
         foreach (var row in rsUsuario.Rows)
         {
             var r = row.ToArray();
-            usuarioId = r[0] is Integer idVal ? idVal.Value : 0;
+            usuarioId = r[0] is Integer idVal ? (int)idVal.Value : 0;
         }
 
         // Insere aluno
@@ -94,16 +120,37 @@ public class AlunoService : IAlunoService
             "INSERT INTO Alunos (Matricula, Curso, UsuarioId) VALUES (?, ?, ?)",
             new object[] { dto.Matricula, dto.Curso, usuarioId });
 
-        // Pega ID do aluno
-        var rsAluno = await _db.Execute("SELECT last_insert_rowid()");
-        long alunoId = 0;
+        // Pega ID do aluno pela matrícula (evita last_insert_rowid race condition)
+        var rsAluno = await _db.Execute(
+            "SELECT Id FROM Alunos WHERE Matricula = ?",
+            new object[] { dto.Matricula });
+        int alunoId = 0;
         foreach (var row in rsAluno.Rows)
         {
             var r = row.ToArray();
-            alunoId = r[0] is Integer idVal ? idVal.Value : 0;
+            alunoId = r[0] is Integer idVal2 ? (int)idVal2.Value : 0;
         }
 
-        return new AlunoDto((int)alunoId, dto.Nome, dto.Email, dto.Matricula, dto.Curso);
+        // Busca o aluno recém criado para confirmar persistência
+        var rsConfirma = await _db.Execute(
+            "SELECT a.Id, u.Nome, u.Email, a.Matricula, a.Curso " +
+            "FROM Alunos a JOIN Usuarios u ON a.UsuarioId = u.Id " +
+            "WHERE a.Id = ?",
+            new object[] { alunoId });
+
+        foreach (var row in rsConfirma.Rows)
+        {
+            var r = row.ToArray();
+            return new AlunoDto(
+                Id: r[0] is Integer id ? (int)id.Value : alunoId,
+                Nome: r[1] is Text nome ? nome.Value : dto.Nome,
+                Email: r[2] is Text email ? email.Value : dto.Email,
+                Matricula: r[3] is Text mat ? mat.Value : dto.Matricula,
+                Curso: r[4] is Text curso ? curso.Value : dto.Curso
+            );
+        }
+
+        return new AlunoDto(alunoId, dto.Nome, dto.Email, dto.Matricula, dto.Curso);
     }
 
     public async Task<bool> DeletarAsync(int id)
