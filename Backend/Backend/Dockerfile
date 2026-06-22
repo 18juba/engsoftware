@@ -1,24 +1,24 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS builder
 WORKDIR /app
 
-# Copia o csproj apontando para a subpasta correta
+# Como o contexto já está na primeira pasta Backend, o .csproj está na subpasta Backend/
 COPY Backend/*.csproj ./
 RUN dotnet restore
 
-# Copia todo o conteúdo da subpasta de código para o container
+# Copia todo o código da subpasta para a pasta atual do container
 COPY Backend/ ./
 RUN dotnet publish -c Release -o /app/publish --no-restore /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 
-# Altera para root temporariamente para instalar o curl sem erro de permissão
+# Corrige a permissão para instalar o curl sem dar erro no stage de produção
 USER root
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/publish .
 
-# Volta para o usuário seguro do .NET
+# Volta para o usuário seguro do .NET 10
 USER app
 
 EXPOSE 8080
