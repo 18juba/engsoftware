@@ -66,7 +66,6 @@ public class AlunosController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Deletar(int id)
         => await _service.DeletarAsync(id) ? NoContent() : NotFound();
 }
@@ -99,14 +98,12 @@ public class ProfessoresController : ControllerBase
     }
 
     [HttpPost("{professorId}/disciplinas/{disciplinaId}")]
-    [Authorize(Roles = "Admin,Professor")]
     public async Task<IActionResult> VincularDisciplina(int professorId, int disciplinaId)
         => await _service.VincularDisciplinaAsync(professorId, disciplinaId)
             ? NoContent()
             : BadRequest(new { message = "Vínculo não foi possível (ids inválidos ou já existente)." });
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Deletar(int id)
         => await _service.DeletarAsync(id) ? NoContent() : NotFound();
 }
@@ -131,7 +128,6 @@ public class DisciplinasController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Criar([FromBody] DisciplinaCreateDto dto)
     {
         var result = await _service.CriarAsync(dto);
@@ -139,7 +135,6 @@ public class DisciplinasController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Deletar(int id)
         => await _service.DeletarAsync(id) ? NoContent() : NotFound();
 }
@@ -164,7 +159,6 @@ public class TurmasController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin,Professor")]
     public async Task<IActionResult> Criar([FromBody] TurmaCreateDto dto)
     {
         var result = await _service.CriarAsync(dto);
@@ -172,7 +166,6 @@ public class TurmasController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Deletar(int id)
         => await _service.DeletarAsync(id) ? NoContent() : NotFound();
 }

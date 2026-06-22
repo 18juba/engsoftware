@@ -15,6 +15,9 @@ public class TursoClient
         var token = Environment.GetEnvironmentVariable("TURSO_AUTH_TOKEN")
             ?? config["Turso:AuthToken"]!;
 
+        if (url.StartsWith("libsql://"))
+            url = url.Replace("libsql://", "https://");
+
         _client = DatabaseClient.Create(opts =>
         {
             opts.Url = url;
