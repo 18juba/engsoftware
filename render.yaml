@@ -14,10 +14,9 @@ services:
     rootDir: auth-service
     runtime: docker
     dockerfilePath: Dockerfile
-    # Vincula o grupo. O Render injeta automaticamente a chave JWT_SECRET aqui
-    envVarGroups:
-      - name: escola-shared-secrets
     envVars:
+      # CORRIGIDO: O grupo inteiro é importado diretamente dentro de envVars
+      - fromGroup: escola-shared-secrets
       - key: APP_URL
         value: https://escola-auth.onrender.com
       - key: DATABASE_URL
@@ -39,6 +38,7 @@ services:
     runtime: docker
     dockerfilePath: Dockerfile
     envVars:
+      # TURSO e variáveis do ASP.NET
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ASPNETCORE_URLS
@@ -47,7 +47,7 @@ services:
         sync: false
       - key: TURSO_AUTH_TOKEN
         sync: false
-      # CORRIGIDO: Sintaxe correta para mapear e renomear uma chave de um grupo
+      # Mapeia especificamente a chave de dentro do grupo para a variável do C#
       - key: Jwt__Key
         fromGroup: escola-shared-secrets
         envVarKey: JWT_SECRET
