@@ -1,10 +1,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS builder
 WORKDIR /app
 
-COPY Backend/*.csproj ./
+# Como o GitHub Actions constrói a partir de Backend/Backend, os arquivos estão na raiz do contexto
+COPY *.csproj ./
 RUN dotnet restore
 
-COPY Backend/ ./
+# Copia tudo o que está na pasta atual do código
+COPY . ./
 RUN dotnet publish -c Release -o /app/publish --no-restore /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
