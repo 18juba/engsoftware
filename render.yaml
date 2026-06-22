@@ -14,7 +14,7 @@ services:
     rootDir: auth-service
     runtime: docker
     dockerfilePath: Dockerfile
-    # Vincula o grupo de segredos a este serviço
+    # Vincula o grupo. O Render injeta automaticamente a chave JWT_SECRET aqui
     envVarGroups:
       - name: escola-shared-secrets
     envVars:
@@ -38,9 +38,6 @@ services:
     rootDir: Backend/Backend
     runtime: docker
     dockerfilePath: Dockerfile
-    # Vincula o mesmo grupo de segredos aqui para o backend ler o JWT_SECRET
-    envVarGroups:
-      - name: escola-shared-secrets
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
@@ -50,17 +47,17 @@ services:
         sync: false
       - key: TURSO_AUTH_TOKEN
         sync: false
-      # Mapeia o segredo compartilhado para o nome que o ASP.NET espera
+      # CORRIGIDO: Sintaxe correta para mapear e renomear uma chave de um grupo
       - key: Jwt__Key
         fromGroup: escola-shared-secrets
-        value: JWT_SECRET
+        envVarKey: JWT_SECRET
       - key: Jwt__Issuer
         value: EscolaApi
       - key: Jwt__Audience
         value: EscolaApiUsers
       - key: AUTH_SERVICE_URL
         fromService:
-          type: web # ADICIONADO: Tipo do serviço de origem
+          type: web
           name: escola-auth
           property: host
 
@@ -72,12 +69,12 @@ services:
     envVars:
       - key: PUBLIC_API_URL
         fromService:
-          type: web # ADICIONADO: Tipo do serviço de origem
+          type: web
           name: escola-backend
           property: host
       - key: PUBLIC_AUTHAPI_URL
         fromService:
-          type: web # ADICIONADO: Tipo do serviço de origem
+          type: web
           name: escola-auth
           property: host
       - key: HOST
