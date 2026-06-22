@@ -5,5 +5,5 @@ type UserTeacher struct {
 	UserID     int    `json:"user_id" gorm:"uniqueIndex"`
 	User       User   `gorm:"foreignKey:UserID" json:"user"`
 	Department string `json:"department" gorm:"not null"`
-	Siape 	   string  `json:"siape"`
+	Siape      string `json:"siape"`
 }

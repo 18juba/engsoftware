@@ -6,9 +6,9 @@ type UserType string
 type UserCharacter string
 
 const (
-    Customer UserType = "student"
-    Teacher  UserType = "teacher"
-    Admin    UserType = "admin"
+	Customer UserType = "student"
+	Teacher  UserType = "teacher"
+	Admin    UserType = "admin"
 )
 
 const (
