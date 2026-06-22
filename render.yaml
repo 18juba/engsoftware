@@ -1,4 +1,5 @@
 version: 1
+
 services:
   - type: web
     name: escola-auth
@@ -41,7 +42,8 @@ services:
       - key: Jwt__Key
         fromService:
           name: escola-auth
-          property: env.JWT_SECRET
+          type: web
+          envVarKey: JWT_SECRET
       - key: Jwt__Issuer
         value: EscolaApi
       - key: Jwt__Audience
@@ -49,7 +51,8 @@ services:
       - key: AUTH_SERVICE_URL
         fromService:
           name: escola-auth
-          property: host  # Render injeta automaticamente a URL interna
+          type: web
+          property: host
 
   - type: web
     name: escola-frontend
@@ -60,10 +63,12 @@ services:
       - key: PUBLIC_API_URL
         fromService:
           name: escola-backend
+          type: web
           property: host
       - key: PUBLIC_AUTHAPI_URL
         fromService:
           name: escola-auth
+          type: web
           property: host
       - key: HOST
         value: 0.0.0.0
