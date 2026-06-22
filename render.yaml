@@ -15,7 +15,7 @@ services:
     runtime: docker
     dockerfilePath: Dockerfile
     envVars:
-      # CORRIGIDO: O grupo inteiro é importado diretamente dentro de envVars
+      # O grupo inteiro é importado diretamente dentro de envVars
       - fromGroup: escola-shared-secrets
       - key: APP_URL
         value: https://escola-auth.onrender.com
@@ -38,7 +38,6 @@ services:
     runtime: docker
     dockerfilePath: Dockerfile
     envVars:
-      # TURSO e variáveis do ASP.NET
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ASPNETCORE_URLS
@@ -47,8 +46,8 @@ services:
         sync: false
       - key: TURSO_AUTH_TOKEN
         sync: false
-      # Mapeia especificamente a chave de dentro do grupo para a variável do C#
-      - key: Jwt__Key
+      # CORRIGIDO: Para renomear, usa-se 'name', 'fromGroup' e 'envVarKey'
+      - name: Jwt__Key
         fromGroup: escola-shared-secrets
         envVarKey: JWT_SECRET
       - key: Jwt__Issuer
