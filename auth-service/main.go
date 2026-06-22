@@ -44,8 +44,13 @@ func main() {
 		authMiddleware,
 	)
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
+	}
+
 	srv := &http.Server{
-		Addr:    "0.0.0.0:8000",
+		Addr:    "0.0.0.0:" + port,
 		Handler: server,
 	}
 
