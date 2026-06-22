@@ -6,9 +6,9 @@ services:
       context: ./auth-service
       dockerfile: Dockerfile
     environment:
-      - APP_URL=http://localhost:8000
-      - DATABASE_URL=${DATABASE_URL}
-      - DATABASE_TOKEN=${DATABASE_TOKEN}
+      - APP_URL=${APP_URL:-http://localhost:8000}
+      - DATABASE_URL=${AUTH_DB_URL}
+      - DATABASE_TOKEN=${AUTH_DB_TOKEN}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_TTL_MINUTES=${JWT_TTL_MINUTES}
       - JWT_ISSUER=${JWT_ISSUER}
@@ -16,8 +16,6 @@ services:
       - CORS_ORIGINS=${CORS_ORIGINS}
     ports:
       - "${AUTH_SERVICE_PORT:-8000}:8000"
-    networks:
-      - app_network
     restart: unless-stopped
 
   backend-aspnet:
@@ -32,27 +30,22 @@ services:
       - Jwt__Key=${JWT_SECRET}
       - Jwt__Issuer=${JWT_ISSUER}
       - Jwt__Audience=${JWT_AUDIENCE}
+      - AUTH_SERVICE_URL=http://auth-service:8000
     ports:
       - "8080:8080"
     depends_on:
       - auth-service
-    networks:
-      - app_network
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 15s
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    depends_on:
-      - auth-service
-      - backend-aspnet
     environment:
       - PUBLIC_API_URL=${PUBLIC_API_URL:-http://localhost:8080}
       - PUBLIC_AUTHAPI_URL=${PUBLIC_AUTHAPI_URL:-http://localhost:8000}
@@ -60,39 +53,4 @@ services:
       - PORT=3000
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
-    networks:
-      - app_network
     restart: unless-stopped
-
-  prometheus:
-    image: prom/prometheus:latest
-    volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    networks:
-      - app_network
-    restart: unless-stopped
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3001:3000"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_SECURITY_ADMIN_USER=admin
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
-    depends_on:
-      - prometheus
-    networks:
-      - app_network
-    restart: unless-stopped
-
-networks:
-  app_network:
-    driver: bridge
-
-volumes:
-  grafana_data:

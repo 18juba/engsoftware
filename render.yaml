@@ -1,0 +1,71 @@
+version: 1
+services:
+  - type: web
+    name: escola-auth
+    rootDir: auth-service
+    runtime: docker
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: APP_URL
+        value: https://escola-auth.onrender.com
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_TOKEN
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+        generator: secret
+      - key: JWT_ISSUER
+        value: EscolaApi
+      - key: JWT_AUDIENCE
+        value: EscolaApiUsers
+      - key: JWT_TTL_MINUTES
+        value: 60
+      - key: CORS_ORIGINS
+        value: https://escola-frontend.onrender.com
+
+  - type: web
+    name: escola-backend
+    rootDir: Backend/Backend
+    runtime: docker
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://+:8080
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: Jwt__Key
+        fromService:
+          name: escola-auth
+          property: env.JWT_SECRET
+      - key: Jwt__Issuer
+        value: EscolaApi
+      - key: Jwt__Audience
+        value: EscolaApiUsers
+      - key: AUTH_SERVICE_URL
+        fromService:
+          name: escola-auth
+          property: host  # Render injeta automaticamente a URL interna
+
+  - type: web
+    name: escola-frontend
+    rootDir: frontend
+    runtime: docker
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: PUBLIC_API_URL
+        fromService:
+          name: escola-backend
+          property: host
+      - key: PUBLIC_AUTHAPI_URL
+        fromService:
+          name: escola-auth
+          property: host
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 3000
