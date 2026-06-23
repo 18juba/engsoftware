@@ -6,19 +6,21 @@
 		id: number;
 		nome: string;
 		semestre: string;
-		disciplina: string;
-		curso: string;
+		disciplina: {
+			id: number,
+			nome: string,
+			codigo: string,
+			cargaHoraria: string
+		};
+		horario: string;
 		alunos: string[];
 	}[] = [];
 
 	async function buscarTurmas() {
 		const response = await apiFetch('/Turmas');
 
-		if (response.ok) {
-			turmas = await response.json();
-		} else {
-			alert('Erro ao buscar turmas');
-		}
+		turmas = await response.json();
+		console.log("turmas: ", turmas)
 	}
 
 	let turmaSelecionada: (typeof turmas)[0] | null = null;
@@ -65,9 +67,7 @@
 							</div>
 
 							<div class="space-y-1 text-sm">
-								<p><span class="font-bold">Disciplina:</span> {turma.disciplina}</p>
-								<p><span class="font-bold">Curso:</span> {turma.curso}</p>
-								<p><span class="font-bold">Alunos:</span> {turma.alunos.length}</p>
+								<p><span class="font-bold">Disciplina:</span> {turma.disciplina.nome}</p>
 							</div>
 
 							<div class="mt-auto flex flex-wrap gap-4 pt-2">
@@ -95,7 +95,7 @@
 				<div>
 					<h2 class="text-2xl font-bold">{turmaSelecionada.nome}</h2>
 					<p class="text-sm opacity-80">
-						{turmaSelecionada.disciplina} • {turmaSelecionada.curso} • {turmaSelecionada.semestre}
+						{turmaSelecionada.disciplina.nome} • {turmaSelecionada.curso} • {turmaSelecionada.semestre}
 					</p>
 				</div>
 				<button
@@ -136,7 +136,7 @@
 				</div>
 
 				<div class="flex flex-col gap-3 rounded-xl bg-(--foreground)/10 p-4">
-					<h3 class="text-lg font-bold">Alunos ({turmaSelecionada.alunos.length})</h3>
+					<h3 class="text-lg font-bold">Alunos ({turmaSelecionada.alunos?.length})</h3>
 					<ul class="space-y-1 text-sm">
 						{#each turmaSelecionada.alunos as aluno}
 							<li class="rounded bg-(--foreground)/10 px-2 py-1">{aluno}</li>
