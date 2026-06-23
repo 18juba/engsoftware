@@ -38,7 +38,7 @@ func main() {
 	
 	allowedOrigins := []string{
 		os.Getenv("FRONTEND_URL"),
-		os.Getenv("BACKEND_URL),
+		os.Getenv("BACKEND_URL"),
 		"http://localhost:3000",
 	}
 
