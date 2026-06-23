@@ -46,7 +46,7 @@ func main() {
 	
 	server.Use(gin.Logger(), gin.Recovery())
 	server.Use(middleware.PrometheusMiddleware())
-
+	
 	setupRoutes(
 		server,
 		deps,
