@@ -35,7 +35,7 @@ func main() {
 	authMiddleware := middleware.RequireAuth(jwtSecret)
 
 	server := gin.Default()
-	
+
 	allowedOrigins := []string{
 		os.Getenv("FRONTEND_URL"),
 		os.Getenv("BACKEND_URL"),
@@ -43,10 +43,10 @@ func main() {
 	}
 
 	server.Use(middleware.CORS(allowedOrigins))
-	
+
 	server.Use(gin.Logger(), gin.Recovery())
 	server.Use(middleware.PrometheusMiddleware())
-	
+
 	setupRoutes(
 		server,
 		deps,
