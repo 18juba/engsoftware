@@ -5,6 +5,7 @@
 	import { env } from '$env/dynamic/public';
 	import { auth } from '$lib/stores/auth';
 	import { toasts } from '$lib/stores/toast';
+	import { authApiFetch } from '$lib/api/authApi';
 
 	let showPassword = $state(false);
 	let name = $state('');
@@ -17,7 +18,7 @@
 	async function register(event: SubmitEvent) {
 		event.preventDefault();
 
-		if (!env.PUBLIC_API_URL) {
+		if (!env.PUBLIC_AUTHAPI_URL) {
 			toasts.add({
 				type: 'danger',
 				title: 'Configuração inválida',
@@ -53,11 +54,8 @@
 		try {
 			isSubmitting = true;
 
-			const response = await fetch(`${env.PUBLIC_API_URL}/auth/register`, {
+			const response = await authApiFetch(`/auth/register`, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
 				body: JSON.stringify({
 					name,
 					email,
@@ -74,7 +72,7 @@
 					description: 'Conta criada com sucesso.'
 				});
 
-				const loginResponse = await fetch(`${env.PUBLIC_API_URL}/auth/login`, {
+				const loginResponse = await authApiFetch(`/auth/login`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'

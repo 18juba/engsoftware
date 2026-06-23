@@ -9,6 +9,7 @@ services:
       - APP_URL=${APP_URL:-http://localhost:8000}
       - DATABASE_URL=${AUTH_DB_URL}
       - DATABASE_TOKEN=${AUTH_DB_TOKEN}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:5173}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_TTL_MINUTES=${JWT_TTL_MINUTES}
       - JWT_ISSUER=${JWT_ISSUER}

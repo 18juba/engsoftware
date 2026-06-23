@@ -12,4 +12,6 @@ func setupRoutes(server *gin.Engine, deps *Dependencies, authMiddleware gin.Hand
 	server.POST("/auth/login", deps.AuthController.Login)
 	server.POST("/auth/logout", deps.AuthController.Logout)
 	server.GET("/auth/session", authMiddleware, deps.AuthController.Session)
+
+	server.PATCH("/users/change_character", authMiddleware, deps.UserController.ChangeCharacter)
 }

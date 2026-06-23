@@ -8,23 +8,23 @@ export const LINKS = [
 	},
 	{
 		id: 2,
-		label: 'Disciplinas',
-		href: '/painel/disciplinas',
-		icon: 'Books.png',
-		userTypes: ['admin', 'student', 'teacher']
+		label: 'Alunos',
+		href: '/painel/alunos',
+		icon: 'Student.png',
+		userTypes: ['admin', 'teacher', 'student']
 	},
 	{
 		id: 3,
-		label: 'Boletim',
-		href: '/painel/boletim',
-		icon: 'Receipt.png',
-		userTypes: ['admin', 'student']
+		label: 'Professores',
+		href: '/painel/professores',
+		icon: 'Teacher.png',
+		userTypes: ['admin', 'teacher', 'student']
 	},
 	{
 		id: 4,
-		label: 'Tarefas',
-		href: '/painel/tarefas',
-		icon: 'Task.png',
+		label: 'Disciplinas',
+		href: '/painel/disciplinas',
+		icon: 'Books.png',
 		userTypes: ['admin', 'student', 'teacher']
 	},
 	{

@@ -14,7 +14,7 @@
 	async function login(event: SubmitEvent) {
 		event.preventDefault();
 
-		if (!env.PUBLIC_API_URL) {
+		if (!env.PUBLIC_AUTHAPI_URL) {
 			toasts.add({
 				type: 'danger',
 				title: 'Configuração inválida',
