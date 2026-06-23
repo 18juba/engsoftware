@@ -9,6 +9,7 @@ public interface IUsuarioService
     Task<IEnumerable<UsuarioDto>> ListarAsync();
     Task<UsuarioDto?> ObterPorIdAsync(int id);
     Task<UsuarioDto> CriarAsync(UsuarioCreateDto dto);
+    Task<UsuarioDto?> AtualizarAsync(int id, UsuarioUpdateDto dto);
     Task<bool> DeletarAsync(int id);
 }
 
@@ -74,6 +75,37 @@ public class UsuarioService : IUsuarioService
         }
 
         return new UsuarioDto((int)id, dto.Nome, dto.Email, dto.Tipo);
+    }
+
+    public async Task<UsuarioDto?> AtualizarAsync(int id, UsuarioUpdateDto dto)
+    {
+        // Verifica se o usuário existe
+        var rsExiste = await _db.Execute(
+            "SELECT Id FROM Usuarios WHERE Id = ?",
+            new object[] { id });
+        if (!rsExiste.Rows.Any()) return null;
+
+        // Se o email foi informado, verifica conflito com outro usuário
+        if (!string.IsNullOrWhiteSpace(dto.Email))
+        {
+            var rsEmail = await _db.Execute(
+                "SELECT Id FROM Usuarios WHERE Email = ? AND Id != ?",
+                new object[] { dto.Email, id });
+            if (rsEmail.Rows.Any())
+                throw new InvalidOperationException($"Email '{dto.Email}' já está em uso.");
+        }
+
+        // Aplica apenas os campos enviados (COALESCE mantém o valor atual se null)
+        await _db.Execute(@"
+            UPDATE Usuarios
+            SET Nome  = COALESCE(?, Nome),
+                Email = COALESCE(?, Email),
+                Tipo  = COALESCE(?, Tipo)
+            WHERE Id = ?",
+            new object[] { dto.Nome!, dto.Email!, dto.Tipo?.ToString()!, id });
+
+        // Retorna o registro atualizado
+        return await ObterPorIdAsync(id);
     }
 
     public async Task<bool> DeletarAsync(int id)

@@ -69,6 +69,46 @@
           }
         }
       },
+      "put": {
+        "tags": [
+          "Alunos"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlunoUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlunoUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlunoUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Alunos"
@@ -185,6 +225,46 @@
           }
         }
       },
+      "put": {
+        "tags": [
+          "Disciplinas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisciplinaUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisciplinaUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisciplinaUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Disciplinas"
@@ -264,6 +344,46 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Professores"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfessorUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfessorUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfessorUpdateDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -387,6 +507,46 @@
           }
         }
       },
+      "put": {
+        "tags": [
+          "Turmas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TurmaUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TurmaUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TurmaUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Turmas"
@@ -466,6 +626,46 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Usuarios"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuarioUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuarioUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuarioUpdateDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -562,7 +762,47 @@
         },
         "additionalProperties": false
       },
+      "AlunoUpdateDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "matricula": {
+            "type": "string",
+            "nullable": true
+          },
+          "curso": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DisciplinaCreateDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "codigo": {
+            "type": "string",
+            "nullable": true
+          },
+          "cargaHoraria": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DisciplinaUpdateDto": {
         "type": "object",
         "properties": {
           "nome": {
@@ -620,6 +860,28 @@
         },
         "additionalProperties": false
       },
+      "ProfessorUpdateDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "siape": {
+            "type": "string",
+            "nullable": true
+          },
+          "departamento": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TipoUsuario": {
         "enum": [
           0,
@@ -647,6 +909,25 @@
         },
         "additionalProperties": false
       },
+      "TurmaUpdateDto": {
+        "type": "object",
+        "properties": {
+          "semestre": {
+            "type": "string",
+            "nullable": true
+          },
+          "horario": {
+            "type": "string",
+            "nullable": true
+          },
+          "disciplinaId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "UsuarioCreateDto": {
         "type": "object",
         "properties": {
@@ -659,6 +940,23 @@
             "nullable": true
           },
           "senha": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipo": {
+            "$ref": "#/components/schemas/TipoUsuario"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UsuarioUpdateDto": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
             "type": "string",
             "nullable": true
           },

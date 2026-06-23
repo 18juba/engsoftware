@@ -1,9 +1,6 @@
 using EscolaApi.Data;
 using EscolaApi.DTOs;
 using Libsql.Client;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EscolaApi.Services;
 
@@ -13,6 +10,7 @@ public interface IDisciplinaService
     Task<IEnumerable<DisciplinaDto>> ListarAsync();
     Task<DisciplinaDto?> ObterPorIdAsync(int id);
     Task<DisciplinaDto> CriarAsync(DisciplinaCreateDto dto);
+    Task<DisciplinaDto?> AtualizarAsync(int id, DisciplinaUpdateDto dto);
     Task<bool> DeletarAsync(int id);
 }
 
@@ -76,6 +74,38 @@ public class DisciplinaService : IDisciplinaService
         return new DisciplinaDto((int)id, dto.Nome, dto.Codigo, dto.CargaHoraria);
     }
 
+    public async Task<DisciplinaDto?> AtualizarAsync(int id, DisciplinaUpdateDto dto)
+    {
+        // Verifica se a disciplina existe
+        var rsExiste = await _db.Execute(
+            "SELECT Id FROM Disciplinas WHERE Id = ?",
+            new object[] { id });
+        if (!rsExiste.Rows.Any()) return null;
+
+        // Se o código foi informado, verifica conflito com outra disciplina
+        if (!string.IsNullOrWhiteSpace(dto.Codigo))
+        {
+            var rsCodigo = await _db.Execute(
+                "SELECT Id FROM Disciplinas WHERE Codigo = ? AND Id != ?",
+                new object[] { dto.Codigo, id });
+            if (rsCodigo.Rows.Any())
+                throw new InvalidOperationException($"Código '{dto.Codigo}' já está em uso.");
+        }
+
+        // COALESCE: mantém o valor atual para qualquer campo null
+        // CargaHoraria: passa 0 como sentinela de "não informado" e protege com CASE
+        await _db.Execute(@"
+            UPDATE Disciplinas
+            SET Nome         = COALESCE(?, Nome),
+                Codigo       = COALESCE(?, Codigo),
+                CargaHoraria = CASE WHEN ? > 0 THEN ? ELSE CargaHoraria END
+            WHERE Id = ?",
+            new object[] { dto.Nome!, dto.Codigo!, dto.CargaHoraria, dto.CargaHoraria, id });
+
+        // Retorna o registro atualizado
+        return await ObterPorIdAsync(id);
+    }
+
     public async Task<bool> DeletarAsync(int id)
     {
         var rs = await _db.Execute("SELECT Id FROM Disciplinas WHERE Id = ?", new object[] { id });
@@ -92,6 +122,7 @@ public interface ITurmaService
     Task<IEnumerable<TurmaDto>> ListarAsync();
     Task<TurmaDto?> ObterPorIdAsync(int id);
     Task<TurmaDto> CriarAsync(TurmaCreateDto dto);
+    Task<TurmaDto?> AtualizarAsync(int id, TurmaUpdateDto dto);
     Task<bool> DeletarAsync(int id);
 }
 
@@ -173,6 +204,46 @@ public class TurmaService : ITurmaService
 
         var disciplina = await ObterDisciplinaPorId(dto.DisciplinaId);
         return new TurmaDto((int)id, dto.Semestre, dto.Horario, disciplina!);
+    }
+
+    public async Task<TurmaDto?> AtualizarAsync(int id, TurmaUpdateDto dto)
+    {
+        // Verifica se a turma existe
+        var rsExiste = await _db.Execute(
+            "SELECT Id FROM Turmas WHERE Id = ?",
+            new object[] { id });
+        if (!rsExiste.Rows.Any()) return null;
+
+        // Se DisciplinaId foi informado, verifica se ela existe
+        if (dto.DisciplinaId.HasValue)
+        {
+            int dId = (int)dto.DisciplinaId.Value;
+            var rsDisc = await _db.Execute(
+                "SELECT Id FROM Disciplinas WHERE Id = ?",
+                new object[] { dId });
+            if (!rsDisc.Rows.Any())
+                throw new InvalidOperationException($"Disciplina com Id {dId} não encontrada.");
+        }
+
+        // COALESCE: mantém valor atual para Semestre e Horario se null
+        // DisciplinaId: atualiza somente se foi informado (> 0)
+        await _db.Execute(@"
+            UPDATE Turmas
+            SET Semestre     = COALESCE(?, Semestre),
+                Horario      = COALESCE(?, Horario),
+                DisciplinaId = CASE WHEN ? > 0 THEN ? ELSE DisciplinaId END
+            WHERE Id = ?",
+            new object[]
+            {
+                dto.Semestre!,
+                dto.Horario!,
+                dto.DisciplinaId ?? 0,
+                dto.DisciplinaId ?? 0,
+                id
+            });
+
+        // Retorna o registro atualizado (com JOIN na disciplina)
+        return await ObterPorIdAsync(id);
     }
 
     private async Task<DisciplinaDto?> ObterDisciplinaPorId(int id)
