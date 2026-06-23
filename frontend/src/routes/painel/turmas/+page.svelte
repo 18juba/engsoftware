@@ -12,7 +12,7 @@
 	}[] = [];
 
 	async function buscarTurmas() {
-		const response = await apiFetch('/turmas');
+		const response = await apiFetch('/Turmas');
 
 		if (response.ok) {
 			turmas = await response.json();
