@@ -82,5 +82,5 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/auth-service:latest
             ghcr.io/${{ github.repository_owner }}/auth-service:${{ github.sha }}
 
-      - name: Redeploy on Railway
-        run: curl -X POST "${{ secrets.RAILWAY_WEBHOOK_URL_AUTH }}"
+      # - name: Redeploy on Railway
+      #   run: curl -X POST "${{ secrets.RAILWAY_WEBHOOK_URL_AUTH }}"
