@@ -12,6 +12,7 @@ public interface IProfessorService
     Task<IEnumerable<ProfessorDto>> ListarAsync();
     Task<ProfessorDto?> ObterPorIdAsync(int id);
     Task<ProfessorDto> CriarAsync(ProfessorCreateDto dto);
+    Task<ProfessorDto?> AtualizarAsync(int id, ProfessorUpdateDto dto);
     Task<bool> VincularDisciplinaAsync(int professorId, int disciplinaId);
     Task<bool> DeletarAsync(int id);
 }
@@ -135,31 +136,81 @@ public class ProfessorService : IProfessorService
         return new ProfessorDto(professorId, dto.Nome, dto.Email, dto.Siape, dto.Departamento);
     }
 
+    public async Task<ProfessorDto?> AtualizarAsync(int id, ProfessorUpdateDto dto)
+    {
+        // Verifica se o professor existe e obtém o UsuarioId vinculado
+        var rsProfessor = await _db.Execute(
+            "SELECT UsuarioId FROM Professores WHERE Id = ?",
+            new object[] { id });
+
+        int usuarioId = 0;
+        foreach (var row in rsProfessor.Rows)
+        {
+            var r = row.ToArray();
+            usuarioId = r[0] is Integer uId ? (int)uId.Value : 0;
+        }
+        if (usuarioId == 0) return null;
+
+        // Se o SIAPE foi informado, verifica conflito com outro professor
+        if (!string.IsNullOrWhiteSpace(dto.Siape))
+        {
+            var rsSiape = await _db.Execute(
+                "SELECT Id FROM Professores WHERE Siape = ? AND Id != ?",
+                new object[] { dto.Siape, id });
+            if (rsSiape.Rows.Any())
+                throw new InvalidOperationException($"SIAPE '{dto.Siape}' já está em uso.");
+        }
+
+        // Se o email foi informado, verifica conflito com outro usuário
+        if (!string.IsNullOrWhiteSpace(dto.Email))
+        {
+            var rsEmail = await _db.Execute(
+                "SELECT Id FROM Usuarios WHERE Email = ? AND Id != ?",
+                new object[] { dto.Email, usuarioId });
+            if (rsEmail.Rows.Any())
+                throw new InvalidOperationException($"Email '{dto.Email}' já está em uso.");
+        }
+
+        // Atualiza Usuarios (Nome e Email pertencem à tabela pai)
+        await _db.Execute(@"
+            UPDATE Usuarios
+            SET Nome  = COALESCE(?, Nome),
+                Email = COALESCE(?, Email)
+            WHERE Id = ?",
+            new object[] { dto.Nome!, dto.Email!, usuarioId });
+
+        // Atualiza Professores (Siape e Departamento pertencem à tabela filha)
+        await _db.Execute(@"
+            UPDATE Professores
+            SET Siape        = COALESCE(?, Siape),
+                Departamento = COALESCE(?, Departamento)
+            WHERE Id = ?",
+            new object[] { dto.Siape!, dto.Departamento!, id });
+
+        // Retorna o registro atualizado
+        return await ObterPorIdAsync(id);
+    }
+
     public async Task<bool> VincularDisciplinaAsync(int professorId, int disciplinaId)
     {
-        // Força int explícito — Libsql não aceita Int64
         int pId = (int)professorId;
         int dId = (int)disciplinaId;
 
-        // Verifica se professor existe
         var rsP = await _db.Execute(
             "SELECT Id FROM Professores WHERE Id = ?",
             new object[] { pId });
         if (!rsP.Rows.Any()) return false;
 
-        // Verifica se disciplina existe
         var rsD = await _db.Execute(
             "SELECT Id FROM Disciplinas WHERE Id = ?",
             new object[] { dId });
         if (!rsD.Rows.Any()) return false;
 
-        // Verifica se vínculo já existe
         var rsV = await _db.Execute(
             "SELECT ProfessorId FROM ProfessorDisciplinas WHERE ProfessorId = ? AND DisciplinaId = ?",
             new object[] { pId, dId });
         if (rsV.Rows.Any()) return false;
 
-        // Cria o vínculo
         await _db.Execute(
             "INSERT INTO ProfessorDisciplinas (ProfessorId, DisciplinaId) VALUES (?, ?)",
             new object[] { pId, dId });

@@ -33,6 +33,20 @@ public class UsuariosController : ControllerBase
         return CreatedAtAction(nameof(ObterPorId), new { id = result.Id }, result);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Atualizar(int id, [FromBody] UsuarioUpdateDto dto)
+    {
+        try
+        {
+            var result = await _service.AtualizarAsync(id, dto);
+            return result is null ? NotFound() : Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Deletar(int id)
         => await _service.DeletarAsync(id) ? NoContent() : NotFound();
@@ -65,6 +79,20 @@ public class AlunosController : ControllerBase
         return CreatedAtAction(nameof(ObterPorId), new { id = result.Id }, result);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Atualizar(int id, [FromBody] AlunoUpdateDto dto)
+    {
+        try
+        {
+            var result = await _service.AtualizarAsync(id, dto);
+            return result is null ? NotFound() : Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Deletar(int id)
         => await _service.DeletarAsync(id) ? NoContent() : NotFound();
@@ -95,6 +123,20 @@ public class ProfessoresController : ControllerBase
     {
         var result = await _service.CriarAsync(dto);
         return CreatedAtAction(nameof(ObterPorId), new { id = result.Id }, result);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Atualizar(int id, [FromBody] ProfessorUpdateDto dto)
+    {
+        try
+        {
+            var result = await _service.AtualizarAsync(id, dto);
+            return result is null ? NotFound() : Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 
     [HttpPost("{professorId}/disciplinas/{disciplinaId}")]
@@ -134,6 +176,20 @@ public class DisciplinasController : ControllerBase
         return CreatedAtAction(nameof(ObterPorId), new { id = result.Id }, result);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Atualizar(int id, [FromBody] DisciplinaUpdateDto dto)
+    {
+        try
+        {
+            var result = await _service.AtualizarAsync(id, dto);
+            return result is null ? NotFound() : Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Deletar(int id)
         => await _service.DeletarAsync(id) ? NoContent() : NotFound();
@@ -163,6 +219,20 @@ public class TurmasController : ControllerBase
     {
         var result = await _service.CriarAsync(dto);
         return CreatedAtAction(nameof(ObterPorId), new { id = result.Id }, result);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Atualizar(int id, [FromBody] TurmaUpdateDto dto)
+    {
+        try
+        {
+            var result = await _service.AtualizarAsync(id, dto);
+            return result is null ? NotFound() : Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 
     [HttpDelete("{id}")]

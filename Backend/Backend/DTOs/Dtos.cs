@@ -13,6 +13,12 @@ public record UsuarioCreateDto(
     string Senha,
     TipoUsuario Tipo);
 
+public record UsuarioUpdateDto(
+    string? Nome,
+    string? Email,
+    TipoUsuario? Tipo   // EscolaApi.Models.TipoUsuario
+);
+
 public record UsuarioDto(int Id, string Nome, string Email, TipoUsuario Tipo);
 
 // ── Aluno ────────────────────────────────────────────────────
@@ -22,6 +28,13 @@ public record AlunoCreateDto(
     string Senha,
     string Matricula,
     string Curso);
+
+public record AlunoUpdateDto(
+        string? Nome,
+        string? Email,
+        string? Matricula,
+        string? Curso
+    );
 
 public record AlunoDto(int Id, string Nome, string Email, string Matricula, string Curso);
 
@@ -33,13 +46,32 @@ public record ProfessorCreateDto(
     string Siape,
     string Departamento);
 
+public record ProfessorUpdateDto(
+    string? Nome,
+    string? Email,
+    string? Siape,
+    string? Departamento
+);
+
 public record ProfessorDto(int Id, string Nome, string Email, string Siape, string Departamento);
 
 // ── Disciplina ───────────────────────────────────────────────
+
+public record DisciplinaUpdateDto(
+    string? Nome,
+    string? Codigo,
+    int CargaHoraria
+);
+
 public record DisciplinaCreateDto(string Nome, string Codigo, int CargaHoraria);
 public record DisciplinaDto(int Id, string Nome, string Codigo, int CargaHoraria);
 
 // ── Turma ────────────────────────────────────────────────────
+public record TurmaUpdateDto(
+    string? Semestre,
+    string? Horario,
+    int? DisciplinaId
+);
 public record TurmaCreateDto(string Semestre, string Horario, int DisciplinaId);
 public record TurmaDto(int Id, string Semestre, string Horario, DisciplinaDto Disciplina);
 

@@ -43,6 +43,27 @@
   },
   {
     "ContainingType": "EscolaApi.Controllers.AlunosController",
+    "Method": "Atualizar",
+    "RelativePath": "api/Alunos/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EscolaApi.DTOs.AlunoUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EscolaApi.Controllers.AlunosController",
     "Method": "Deletar",
     "RelativePath": "api/Alunos/{id}",
     "HttpMethod": "DELETE",
@@ -117,6 +138,27 @@
   },
   {
     "ContainingType": "EscolaApi.Controllers.DisciplinasController",
+    "Method": "Atualizar",
+    "RelativePath": "api/Disciplinas/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EscolaApi.DTOs.DisciplinaUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EscolaApi.Controllers.DisciplinasController",
     "Method": "Deletar",
     "RelativePath": "api/Disciplinas/{id}",
     "HttpMethod": "DELETE",
@@ -168,6 +210,27 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EscolaApi.Controllers.ProfessoresController",
+    "Method": "Atualizar",
+    "RelativePath": "api/Professores/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EscolaApi.DTOs.ProfessorUpdateDto",
         "IsRequired": true
       }
     ],
@@ -254,6 +317,27 @@
   },
   {
     "ContainingType": "EscolaApi.Controllers.TurmasController",
+    "Method": "Atualizar",
+    "RelativePath": "api/Turmas/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EscolaApi.DTOs.TurmaUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EscolaApi.Controllers.TurmasController",
     "Method": "Deletar",
     "RelativePath": "api/Turmas/{id}",
     "HttpMethod": "DELETE",
@@ -305,6 +389,27 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EscolaApi.Controllers.UsuariosController",
+    "Method": "Atualizar",
+    "RelativePath": "api/Usuarios/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EscolaApi.DTOs.UsuarioUpdateDto",
         "IsRequired": true
       }
     ],

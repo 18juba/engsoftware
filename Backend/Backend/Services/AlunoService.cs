@@ -1,9 +1,6 @@
 using EscolaApi.Data;
 using EscolaApi.DTOs;
 using Libsql.Client;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EscolaApi.Services;
 
@@ -12,6 +9,7 @@ public interface IAlunoService
     Task<IEnumerable<AlunoDto>> ListarAsync();
     Task<AlunoDto?> ObterPorIdAsync(int id);
     Task<AlunoDto> CriarAsync(AlunoCreateDto dto);
+    Task<AlunoDto?> AtualizarAsync(int id, AlunoUpdateDto dto);
     Task<bool> DeletarAsync(int id);
 }
 
@@ -151,6 +149,61 @@ public class AlunoService : IAlunoService
         }
 
         return new AlunoDto(alunoId, dto.Nome, dto.Email, dto.Matricula, dto.Curso);
+    }
+
+    public async Task<AlunoDto?> AtualizarAsync(int id, AlunoUpdateDto dto)
+    {
+        // Verifica se o aluno existe e obtém o UsuarioId vinculado
+        var rsAluno = await _db.Execute(
+            "SELECT UsuarioId FROM Alunos WHERE Id = ?",
+            new object[] { id });
+
+        int usuarioId = 0;
+        foreach (var row in rsAluno.Rows)
+        {
+            var r = row.ToArray();
+            usuarioId = r[0] is Integer uId ? (int)uId.Value : 0;
+        }
+        if (usuarioId == 0) return null;
+
+        // Se a matrícula foi informada, verifica conflito com outro aluno
+        if (!string.IsNullOrWhiteSpace(dto.Matricula))
+        {
+            var rsMat = await _db.Execute(
+                "SELECT Id FROM Alunos WHERE Matricula = ? AND Id != ?",
+                new object[] { dto.Matricula, id });
+            if (rsMat.Rows.Any())
+                throw new InvalidOperationException($"Matrícula '{dto.Matricula}' já está em uso.");
+        }
+
+        // Se o email foi informado, verifica conflito com outro usuário
+        if (!string.IsNullOrWhiteSpace(dto.Email))
+        {
+            var rsEmail = await _db.Execute(
+                "SELECT Id FROM Usuarios WHERE Email = ? AND Id != ?",
+                new object[] { dto.Email, usuarioId });
+            if (rsEmail.Rows.Any())
+                throw new InvalidOperationException($"Email '{dto.Email}' já está em uso.");
+        }
+
+        // Atualiza Usuarios (Nome e Email pertencem à tabela pai)
+        await _db.Execute(@"
+            UPDATE Usuarios
+            SET Nome  = COALESCE(?, Nome),
+                Email = COALESCE(?, Email)
+            WHERE Id = ?",
+            new object[] { dto.Nome!, dto.Email!, usuarioId });
+
+        // Atualiza Alunos (Matricula e Curso pertencem à tabela filha)
+        await _db.Execute(@"
+            UPDATE Alunos
+            SET Matricula = COALESCE(?, Matricula),
+                Curso     = COALESCE(?, Curso)
+            WHERE Id = ?",
+            new object[] { dto.Matricula!, dto.Curso!, id });
+
+        // Retorna o registro atualizado
+        return await ObterPorIdAsync(id);
     }
 
     public async Task<bool> DeletarAsync(int id)
