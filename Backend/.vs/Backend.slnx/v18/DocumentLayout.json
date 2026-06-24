@@ -3,6 +3,17 @@
   "WorkspaceRootPath": "D:\\Documentos\\Dev\\engsoftware\\Backend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\services\\professorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\services\\professorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\services\\alunoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\services\\alunoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\franc\\AppData\\Local\\Temp\\.vsdbgsrc\\e4475417838f3b465ac651b320a54e1f8d2aae45372d8fbc81d249959fc669ce\\Statement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\services\\usuarioservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\services\\usuarioservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -13,14 +24,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\services\\domainservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\services\\domainservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\services\\professorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\services\\professorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\services\\alunoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\services\\alunoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -34,11 +37,22 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
+              "Title": "Statement.cs",
+              "DocumentMoniker": "C:\\Users\\franc\\AppData\\Local\\Temp\\.vsdbgsrc\\e4475417838f3b465ac651b320a54e1f8d2aae45372d8fbc81d249959fc669ce\\Statement.cs",
+              "ToolTip": "C:\\Users\\franc\\AppData\\Local\\Temp\\.vsdbgsrc\\e4475417838f3b465ac651b320a54e1f8d2aae45372d8fbc81d249959fc669ce\\Statement.cs [Somente Leitura]",
+              "ViewState": "AgIAACkAAAAAAAAAAAAawDQAAAAFAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-24T17:11:30.026Z",
+              "EditorCaption": " [Somente Leitura]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "DomainControllers.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Controllers\\DomainControllers.cs",
               "RelativeDocumentMoniker": "Backend\\Controllers\\DomainControllers.cs",
@@ -46,12 +60,11 @@
               "RelativeToolTip": "Backend\\Controllers\\DomainControllers.cs",
               "ViewState": "AgIAABoAAAAAAAAAAAAgwPAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-21T22:37:21.925Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-21T22:37:21.925Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "DomainServices.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\DomainServices.cs",
               "RelativeDocumentMoniker": "Backend\\Services\\DomainServices.cs",
@@ -59,51 +72,50 @@
               "RelativeToolTip": "Backend\\Services\\DomainServices.cs",
               "ViewState": "AgIAAA8AAAAAAAAAAAAowAIAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-21T22:34:56.78Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-21T22:34:56.78Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "UsuarioService.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\UsuarioService.cs",
               "RelativeDocumentMoniker": "Backend\\Services\\UsuarioService.cs",
               "ToolTip": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\UsuarioService.cs",
               "RelativeToolTip": "Backend\\Services\\UsuarioService.cs",
-              "ViewState": "AgIAAGsAAAAAAAAAAAAswHYAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAADkAAAAAAAAAAAAIwHYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-16T23:11:40.29Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "ProfessorService.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\ProfessorService.cs",
               "RelativeDocumentMoniker": "Backend\\Services\\ProfessorService.cs",
               "ToolTip": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\ProfessorService.cs",
               "RelativeToolTip": "Backend\\Services\\ProfessorService.cs",
-              "ViewState": "AgIAAIEAAAAAAAAAAAAUwOQAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAUwGUAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-16T23:35:42.953Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "AlunoService.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\AlunoService.cs",
               "RelativeDocumentMoniker": "Backend\\Services\\AlunoService.cs",
               "ToolTip": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\AlunoService.cs",
               "RelativeToolTip": "Backend\\Services\\AlunoService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAsAAAAAAAAAA==",
+              "ViewState": "AgIAAFYAAAAAAAAAAAAawGEAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-16T16:53:20.237Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Program.cs",
               "RelativeDocumentMoniker": "Backend\\Program.cs",

@@ -95,7 +95,12 @@ public class AlunoService : IAlunoService
                 throw new InvalidOperationException($"Matrícula '{dto.Matricula}' já está em uso.");
         }
 
-        var senhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
+        var senhaHash = "12345678";
+        if (!String.IsNullOrEmpty(dto.Senha))
+        {
+            senhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
+        }
+            
 
         // Insere usuário
         await _db.Execute(

@@ -99,7 +99,11 @@ public class ProfessorService : IProfessorService
                 throw new InvalidOperationException($"SIAPE '{dto.Siape}' já está em uso.");
         }
 
-        var senhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
+        var senhaHash = "12345678";
+        if (!String.IsNullOrEmpty(dto.Senha))
+        {
+            senhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
+        }
 
         // Insere usuário
         await _db.Execute(
