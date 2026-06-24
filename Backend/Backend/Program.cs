@@ -36,9 +36,9 @@ try
     // 1. CORS
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy("https://escola-frontend-production.up.railway.app", policy =>
+        options.AddPolicy("ProductionCors", policy =>
         {
-            policy.AllowAnyOrigin()
+            policy.WithOrigins("https://escola-frontend-production.up.railway.app")
                   .AllowAnyMethod()
                   .AllowAnyHeader();
         });
@@ -193,7 +193,7 @@ try
     app.UseHttpMetrics();
     app.MapMetrics(); // expõe em /metrics
 
-    app.UseCors("AllowAll");
+    app.UseCors("ProductionCors");
     app.UseAuthentication();
     app.UseAuthorization();
 
