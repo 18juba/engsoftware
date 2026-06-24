@@ -121,6 +121,7 @@ try
     });
 
     var app = builder.Build();
+    app.UseCors("ProductionCors");
 
     // ==================== MIDDLEWARES (PIPELINE) ====================
 
@@ -193,7 +194,6 @@ try
     app.UseHttpMetrics();
     app.MapMetrics(); // expõe em /metrics
 
-    app.UseCors("ProductionCors");
     app.UseAuthentication();
     app.UseAuthorization();
 
