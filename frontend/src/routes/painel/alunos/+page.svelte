@@ -21,6 +21,7 @@
 			nome: '',
 			email: '',
 			matricula: '',
+			senha: '12345678',
 			curso: ''
 		};
 	}

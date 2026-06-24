@@ -21,6 +21,7 @@
 			nome: '',
 			email: '',
 			siape: '',
+			senha: '12345678',
 			departamento: ''
 		};
 	}
