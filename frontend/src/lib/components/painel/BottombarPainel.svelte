@@ -37,7 +37,7 @@
 			{#if item.userTypes.includes(userType)}
 				<li>
 					<a
-						href={resolve(item.href)}
+						href={resolve(item.href as Parameters<typeof resolve>[0])}
 						class="
 						flex flex-col items-center gap-1
 						rounded-b

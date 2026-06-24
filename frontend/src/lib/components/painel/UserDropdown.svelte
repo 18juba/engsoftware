@@ -3,11 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
-	type UserDropdownProps = {
-		openProfile: () => void;
-	};
-
-	let { openProfile } = $props() as UserDropdownProps;
+	let { openProfile }: { openProfile: () => void } = $props();
 
 	async function logout() {
 		auth.clearToken();

@@ -5,7 +5,10 @@
 	import { env } from '$env/dynamic/public';
 	import { auth } from '$lib/stores/auth';
 	import { toasts } from '$lib/stores/toast';
-	import { authApiFetch } from '$lib/api/authApi';
+	import { authApiFetch, AuthApiError } from '$lib/api/authApi';
+	import type { User } from '$lib/types/user';
+
+	type LoginResponse = { token: string; user: User };
 
 	let showPassword = $state(false);
 	let name = $state('');
@@ -26,6 +29,7 @@
 			});
 			return;
 		}
+
 		if (!name.trim() || !email.trim() || !password || !passwordConfirmation) {
 			toasts.add({
 				type: 'danger',
@@ -34,6 +38,7 @@
 			});
 			return;
 		}
+
 		if (password.length < 8) {
 			toasts.add({
 				type: 'danger',
@@ -42,6 +47,7 @@
 			});
 			return;
 		}
+
 		if (password !== passwordConfirmation) {
 			toasts.add({
 				type: 'danger',
@@ -54,7 +60,7 @@
 		try {
 			isSubmitting = true;
 
-			const response = await authApiFetch(`/auth/register`, {
+			await authApiFetch<void>(`/auth/register`, {
 				method: 'POST',
 				body: JSON.stringify({
 					name,
@@ -65,65 +71,54 @@
 				})
 			});
 
-			if (response.status === 201) {
-				toasts.add({
-					type: 'success',
-					title: 'Cadastro realizado',
-					description: 'Conta criada com sucesso.'
-				});
+			toasts.add({
+				type: 'success',
+				title: 'Cadastro realizado',
+				description: 'Conta criada com sucesso.'
+			});
 
-				const loginResponse = await authApiFetch(`/auth/login`, {
+			try {
+				const data = await authApiFetch<LoginResponse>(`/auth/login`, {
 					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						email,
-						password
-					})
+					body: JSON.stringify({ email, password })
 				});
 
-				if (loginResponse.status === 200) {
-					const data = await loginResponse.json();
-					auth.setToken(data.token);
-					auth.setUser(data.user);
-					await goto(resolve('/painel'));
-					return;
-				}
-
+				auth.setToken(data.token);
+				auth.setUser(data.user);
+				await goto(resolve('/painel'));
+			} catch {
 				toasts.add({
 					type: 'info',
 					title: 'Conta criada',
 					description: 'Faça login para continuar.'
 				});
 				await goto(resolve('/'));
-				return;
 			}
-
-			if (response.status === 400) {
+		} catch (error) {
+			if (error instanceof AuthApiError) {
+				if (error.statusCode === 400) {
+					toasts.add({
+						type: 'danger',
+						title: 'Dados inválidos',
+						description: 'Revise os dados e tente novamente.'
+					});
+					return;
+				}
+				if (error.statusCode === 409) {
+					toasts.add({
+						type: 'danger',
+						title: 'E-mail em uso',
+						description: 'Esse e-mail já possui cadastro.'
+					});
+					return;
+				}
 				toasts.add({
 					type: 'danger',
-					title: 'Dados inválidos',
-					description: 'Revise os dados e tente novamente.'
+					title: 'Erro no cadastro',
+					description: 'Não foi possível concluir o cadastro.'
 				});
 				return;
 			}
-
-			if (response.status === 409) {
-				toasts.add({
-					type: 'danger',
-					title: 'E-mail em uso',
-					description: 'Esse e-mail já possui cadastro.'
-				});
-				return;
-			}
-
-			toasts.add({
-				type: 'danger',
-				title: 'Erro no cadastro',
-				description: 'Não foi possível concluir o cadastro.'
-			});
-		} catch {
 			toasts.add({
 				type: 'danger',
 				title: 'Erro de conexão',

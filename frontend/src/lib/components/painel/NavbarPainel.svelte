@@ -15,7 +15,7 @@
 	const userStore = auth.user;
 
 	let user = $derived($userStore);
-	let userType = $derived(user?.type);
+	let userType = $derived(user?.type ?? '');
 
 	let isSidebarOpen = $state(true);
 	let isUserDropdownOpen = $state(false);
@@ -119,7 +119,7 @@
 			<ul class="font2 flex flex-col gap-6">
 				{#each LINKS as item (item.id)}
 					{#if item.userTypes.includes(userType)}
-						<a href={resolve(item.href)}>
+						<a href={resolve(item.href as Parameters<typeof resolve>[0])}>
 							<li
 								class={`flex items-center justify-start gap-1 py-0.5 pl-1 font-bold transition-all duration-100
 								${
