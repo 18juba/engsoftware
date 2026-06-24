@@ -120,7 +120,7 @@
 					{#if item.userTypes.includes(userType)}
 						<a href={item.href}>
 							<li
-								class={`flex items-center justify-start gap-1 pl-1 py-0.5 font-bold transition-all duration-100
+								class={`flex items-center justify-start gap-1 py-0.5 pl-1 font-bold transition-all duration-100
 								${
 									isActive(item.href)
 										? 'border-l border-l-(--foreground) bg-linear-to-r from-(--foreground)/20 to-transparent'

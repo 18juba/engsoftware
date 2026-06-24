@@ -12,7 +12,7 @@ export type User = {
 export type UserType = 'admin' | 'teacher' | 'student';
 
 export type UserTeacher = User & {
-	department: string;	
+	department: string;
 };
 
 export type UserStudent = User & {
