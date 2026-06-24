@@ -3,6 +3,6 @@ export type Professor = {
 	nome: string;
 	email: string;
 	siape: string;
-	senha: string | null
+	senha: string | null;
 	departamento: string;
 };
