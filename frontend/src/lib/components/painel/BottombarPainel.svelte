@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import Icon from '../ui/Icon.svelte';
 	import { LINKS } from './Links';
+	import { resolve } from '$app/paths';
 
 	let { userType } = $props();
 
@@ -36,7 +37,7 @@
 			{#if item.userTypes.includes(userType)}
 				<li>
 					<a
-						href={item.href}
+						href={resolve(item.href)}
 						class="
 						flex flex-col items-center gap-1
 						rounded-b

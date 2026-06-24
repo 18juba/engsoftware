@@ -8,6 +8,7 @@
 	import { LINKS } from './Links';
 	import UserDropdown from './UserDropdown.svelte';
 	import UserModal from '../modals/UserModal.svelte';
+	import { resolve } from '$app/paths';
 
 	let { children } = $props();
 
@@ -89,7 +90,7 @@
 			{#if user}
 				<Icon icon={`characters/${user?.character}.png`} class="h-8 w-8 sm:h-10 sm:w-10" />
 			{:else}
-				<Icon icon={`characters/anonymous.png`} class="h-8 w-8 sm:h-10 sm:w-10" />
+				<Icon icon="characters/anonymous.png" class="h-8 w-8 sm:h-10 sm:w-10" />
 			{/if}
 
 			<div class="flex flex-col">
@@ -100,7 +101,7 @@
 				icon={isUserDropdownOpen ? 'ArrowUp.png' : 'ArrowDown.png'}
 				class="h-8 w-8 cursor-pointer hover:scale-105 sm:ml-4"
 				onClick={toggleUserDropdown}
-			/>{' '}
+			/>
 			{#if isUserDropdownOpen}
 				<UserDropdown {openProfile} />
 			{/if}
@@ -118,7 +119,7 @@
 			<ul class="font2 flex flex-col gap-6">
 				{#each LINKS as item (item.id)}
 					{#if item.userTypes.includes(userType)}
-						<a href={item.href}>
+						<a href={resolve(item.href)}>
 							<li
 								class={`flex items-center justify-start gap-1 py-0.5 pl-1 font-bold transition-all duration-100
 								${

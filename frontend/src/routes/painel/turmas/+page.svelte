@@ -62,13 +62,16 @@
 			return;
 		}
 
-		const payload: any = {
+		const payload: Turma = {
 			id: dadosFormulario.id,
 			semestre: dadosFormulario.semestre,
 			horario: dadosFormulario.horario,
 			disciplinaId: Number(disciplinaIdSelecionado),
 			disciplina: {
-				id: Number(disciplinaIdSelecionado)
+				id: Number(disciplinaIdSelecionado),
+				nome: '',
+				codigo: '',
+				cargaHoraria: ''
 			}
 		};
 
