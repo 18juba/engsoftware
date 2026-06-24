@@ -36,7 +36,7 @@ try
     // 1. CORS
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy("AllowAll", policy =>
+        options.AddPolicy("https://escola-frontend-production.up.railway.app", policy =>
         {
             policy.AllowAnyOrigin()
                   .AllowAnyMethod()
