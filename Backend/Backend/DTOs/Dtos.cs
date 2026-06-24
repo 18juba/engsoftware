@@ -25,7 +25,7 @@ public record UsuarioDto(int Id, string Nome, string Email, TipoUsuario Tipo);
 public record AlunoCreateDto(
     string Nome,
     string Email,
-    string Senha,
+    string? Senha,
     string Matricula,
     string Curso);
 
@@ -42,7 +42,7 @@ public record AlunoDto(int Id, string Nome, string Email, string Matricula, stri
 public record ProfessorCreateDto(
     string Nome,
     string Email,
-    string Senha,
+    string? Senha,
     string Siape,
     string Departamento);
 
