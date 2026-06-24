@@ -33,7 +33,7 @@ docker compose up -d
 | Serviço | URL |
 |---|---|
 | Frontend | http://localhost:3000 ou escola-frontend-production.up.railway.app |
-| API Backend | http://localhost:8080/swagger ou escola-backend-production.up.railway.app/swagger |
+| API Backend | http://localhost:8080/scalar ou escola-backend-production.up.railway.app/scalar |
 | Auth Service | http://localhost:8000 ou escola-auth-production.up.railway.app |
 
 ## Health Checks
