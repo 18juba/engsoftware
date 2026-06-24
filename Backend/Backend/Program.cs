@@ -36,9 +36,9 @@ try
     // 1. CORS
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy("ProductionCors", policy =>
+        options.AddPolicy("AllowAll", policy =>
         {
-            policy.WithOrigins("https://escola-frontend-production.up.railway.app")
+            policy.AllowAnyOrigin()
                   .AllowAnyMethod()
                   .AllowAnyHeader();
         });
@@ -121,7 +121,6 @@ try
     });
 
     var app = builder.Build();
-    app.UseCors("ProductionCors");
 
     // ==================== MIDDLEWARES (PIPELINE) ====================
 
@@ -194,6 +193,7 @@ try
     app.UseHttpMetrics();
     app.MapMetrics(); // expõe em /metrics
 
+    app.UseCors("AllowAll");
     app.UseAuthentication();
     app.UseAuthorization();
 

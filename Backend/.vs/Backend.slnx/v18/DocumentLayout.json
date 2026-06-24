@@ -11,6 +11,22 @@
       "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\services\\alunoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\controllers\\domaincontrollers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\controllers\\domaincontrollers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\dtos\\dtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\dtos\\dtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\franc\\AppData\\Local\\Temp\\.vsdbgsrc\\e4475417838f3b465ac651b320a54e1f8d2aae45372d8fbc81d249959fc669ce\\Statement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -18,16 +34,8 @@
       "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\services\\usuarioservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\controllers\\domaincontrollers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\controllers\\domaincontrollers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\services\\domainservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\services\\domainservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|d:\\documentos\\dev\\engsoftware\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B5CEE1AB-68C5-FCEC-EA61-653FFB609ED2}|Backend\\Backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -37,11 +45,37 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
+              "Title": "Dtos.cs",
+              "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\DTOs\\Dtos.cs",
+              "RelativeDocumentMoniker": "Backend\\DTOs\\Dtos.cs",
+              "ToolTip": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\DTOs\\Dtos.cs",
+              "RelativeToolTip": "Backend\\DTOs\\Dtos.cs",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAIwCwAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-24T17:50:57.969Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\appsettings.json",
+              "RelativeDocumentMoniker": "Backend\\appsettings.json",
+              "ToolTip": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\appsettings.json",
+              "RelativeToolTip": "Backend\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-06-24T17:28:27.984Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "Statement.cs",
               "DocumentMoniker": "C:\\Users\\franc\\AppData\\Local\\Temp\\.vsdbgsrc\\e4475417838f3b465ac651b320a54e1f8d2aae45372d8fbc81d249959fc669ce\\Statement.cs",
               "ToolTip": "C:\\Users\\franc\\AppData\\Local\\Temp\\.vsdbgsrc\\e4475417838f3b465ac651b320a54e1f8d2aae45372d8fbc81d249959fc669ce\\Statement.cs [Somente Leitura]",
@@ -52,7 +86,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "DomainControllers.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Controllers\\DomainControllers.cs",
               "RelativeDocumentMoniker": "Backend\\Controllers\\DomainControllers.cs",
@@ -60,11 +94,12 @@
               "RelativeToolTip": "Backend\\Controllers\\DomainControllers.cs",
               "ViewState": "AgIAABoAAAAAAAAAAAAgwPAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-21T22:37:21.925Z"
+              "WhenOpened": "2026-06-21T22:37:21.925Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
               "Title": "DomainServices.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\DomainServices.cs",
               "RelativeDocumentMoniker": "Backend\\Services\\DomainServices.cs",
@@ -76,7 +111,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 7,
               "Title": "UsuarioService.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\UsuarioService.cs",
               "RelativeDocumentMoniker": "Backend\\Services\\UsuarioService.cs",
@@ -95,7 +130,7 @@
               "RelativeDocumentMoniker": "Backend\\Services\\ProfessorService.cs",
               "ToolTip": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\ProfessorService.cs",
               "RelativeToolTip": "Backend\\Services\\ProfessorService.cs",
-              "ViewState": "AgIAAGAAAAAAAAAAAAAUwGUAAAAhAAAAAAAAAA==",
+              "ViewState": "AgIAAF0AAAAAAAAAAAAUwGUAAABCAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-16T23:35:42.953Z",
               "EditorCaption": ""
@@ -108,22 +143,23 @@
               "RelativeDocumentMoniker": "Backend\\Services\\AlunoService.cs",
               "ToolTip": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Services\\AlunoService.cs",
               "RelativeToolTip": "Backend\\Services\\AlunoService.cs",
-              "ViewState": "AgIAAFYAAAAAAAAAAAAawGEAAAAhAAAAAAAAAA==",
+              "ViewState": "AgIAAFMAAAAAAAAAAAAswGEAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-16T16:53:20.237Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 4,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Program.cs",
               "RelativeDocumentMoniker": "Backend\\Program.cs",
               "ToolTip": "D:\\Documentos\\Dev\\engsoftware\\Backend\\Backend\\Program.cs",
               "RelativeToolTip": "Backend\\Program.cs",
-              "ViewState": "AgIAAMMAAAAAAAAAAAAIwNIAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAALcAAAAAAAAAAAAowMwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-11T23:20:29.896Z"
+              "WhenOpened": "2026-06-11T23:20:29.896Z",
+              "EditorCaption": ""
             }
           ]
         }
